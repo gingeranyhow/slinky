@@ -1,6 +1,6 @@
 {
-  "name": "inky",
-  "productName": "Inky",
+  "name": "soy-inky",
+  "productName": "Soy Inky",
   "version": "0.7.0",
   "description": "An editor for ink",
   "main": "main-process/main.js",
@@ -10,19 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inkle/inky.git"
+    "url": "git+https://github.com/robinsloan/soy-inky.git"
   },
   "keywords": [
     "ink",
     "narrative",
     "editor"
   ],
-  "author": "inkle Ltd",
+  "author": "inkle Ltd and Robin Sloan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/inkly/inky/issues"
+    "url": "https://github.com/robinsloan/soy-inky/issues"
   },
-  "homepage": "http://www.inklestudios.com/ink",
   "devDependencies": {
     "electron": "^1.4.3",
     "markdown-html": "^0.0.8",

@@ -7,7 +7,7 @@ cd "`dirname "$0"`"
 #
 
 # Clean
-rm -rf Inky-darwin-x64/
+rm -rf Soy\ Inky-darwin-x64/
 
 # Ensure it's correctly/fully installed first
 ( cd app && npm install )
@@ -16,7 +16,7 @@ rm -rf Inky-darwin-x64/
 ./resources/makeIcns.command
 
 # Mac
-electron-packager app Inky --platform=darwin --arch=x64 --icon=resources/Icon.icns --extend-info=resources/info.plist --app-bundle-id=com.inkle.inky --prune --asar.unpackDir="main-process/ink" --ignore="inklecate_win.exe"
+electron-packager app Soy\ Inky --platform=darwin --arch=x64 --icon=resources/Icon.icns --extend-info=resources/info.plist --app-bundle-id=com.inkle.inky --prune --asar.unpackDir="main-process/ink" --ignore="inklecate_win.exe"
 
 # Remove .icns again
 rm resources/Icon.icns
