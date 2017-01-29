@@ -4,6 +4,10 @@ var events = {};
 var lastFadeTime = 0;
 var $textBuffer = null;
 
+// ROBIN: We are introducing the concept of "single lines" that restrict the display of text that follows them until they are "accepted."
+var singleLineAcceptances = new Array();
+var ignoreNextSingleLine = false;
+
 document.addEventListener("keyup", function(){
     $("#player").removeClass("altKey");
 });
@@ -43,8 +47,8 @@ function showSessionView(sessionId) {
 
 function fadeIn($jqueryElement) {
 
-    const minimumTimeSeparation = 200;
-    const animDuration = 1000;
+    const minimumTimeSeparation = 250;
+    const animDuration = 500;
 
     var currentTime = Date.now();
     var timeSinceLastFade = currentTime - lastFadeTime;
@@ -86,6 +90,7 @@ function prepareForNewPlaythrough(sessionId) {
     $textBuffer.height(0);
 }
 
+// ROBIN: Most of our edits are in this function.
 function addTextSection(text)
 {
     var $paragraph = $("<p class='storyText'></p>");
@@ -97,6 +102,38 @@ function addTextSection(text)
     var textAsSpans = "<span>" + splitIntoSpans.join("</span> <span>") + "</span>";
 
     $paragraph.html(textAsSpans);
+
+    // ROBIN: Determine if we have a single line.
+    //var isSingleLine = text.match(/^([A-Z\d\ ]+):/);
+    var isSingleLine = text.match(/^LINA:/);
+
+    if (isSingleLine && !ignoreNextSingleLine) {
+        // ROBIN: For now, make these single lines look like choices. (We might change this appearance in the future.)
+        $paragraph.addClass("singleLine");
+
+        // ROBIN: We create a new jQuery Deferred object to control the rendering of subsequent text.
+        singleLineAcceptances.push($.Deferred());
+
+        // ROBIN: We tell the single line that Deferred object's index.
+        $paragraph.data("deferred-index", singleLineAcceptances.length - 1);
+
+        // ROBIN: Now we give the player a way to click and "resolve" that Deferred object.
+        $paragraph.on("click", function(event) {
+            // ROBIN: REMINDER! "this" is different in the => functions.
+            // So, I am not using the => syntax.
+
+            // ROBIN: When clicked, we access this single line's Deferred...
+            var i = $(this).data("deferred-index");
+            var deferred = singleLineAcceptances[i];
+
+            // ROBIN: ...and resolve it, revealing the text below.
+            deferred.resolve();
+            event.preventDefault();
+        });
+    }
+
+    // ROBIN: We always reset this.
+    ignoreNextSingleLine = false;
 
     // Keep track of the offset of each word into the content,
     // starting from the end of the last choice (it's global in the current play session)
@@ -136,8 +173,37 @@ function addTextSection(text)
         }
     });
 
-    if( shouldAnimate() )
-        fadeIn($paragraph);
+    if (shouldAnimate()) {
+        if (singleLineAcceptances.length == 0) {
+            // ROBIN: Here, we haven't yet encountered a single line that must be accepted, so just draw text as normal.
+            fadeIn($paragraph);
+        } else {
+            // ROBIN: Here, we have encountered at least one single line, so we need to link this item up with the appropriate line's Deferred.
+
+            var deferred;
+
+             if (!isSingleLine) {
+                // ROBIN: This is normal text, so we make its reveal dependent on the most recent single line.
+                deferred = singleLineAcceptances[singleLineAcceptances.length-1].promise();
+            }
+
+            if (isSingleLine && (singleLineAcceptances.length > 1)) {
+                // ROBIN: We don't ever want to make a single line's reveal dependent on... itself... so we have to go back to the one before it. This is a bit fussy.
+                deferred = singleLineAcceptances[singleLineAcceptances.length-2].promise();
+            }
+
+            if (deferred) {
+                // ROBIN: Here, we hide this text until until the most recent single line is clicked.
+                $paragraph.css("opacity", 0);
+                $.when(deferred).then( (event) => {
+                    fadeIn($paragraph);
+                });
+            } else {
+                // ROBIN: We have no Deferred to attach, so just show it!
+                fadeIn($paragraph);
+            }
+        }
+    }
 }
 
 function addTags(tags)
@@ -160,9 +226,20 @@ function addChoice(choice, callback)
     $choicePara.append($choice);
     $textBuffer.append($choicePara);
 
-    // Fade it in
-    if( shouldAnimate() )
+    // ROBIN: We have to apply our hiding logic to choices, too.
+    if( shouldAnimate() ) {
+        if (singleLineAcceptances.length > 0) {
+            // ROBIN: Here, we have encountered a single line previously, so...
+            var deferred = singleLineAcceptances[singleLineAcceptances.length-1].promise();
+            $choicePara.css("opacity", 0);
+            $.when(deferred).then( (event) => {
+                fadeIn($choicePara);
+            });
+        }
+    } else {
+        // ROBIN: There haven't been any single lines, so just display as usual.
         fadeIn($choicePara);
+    }
 
     // When this choice is clicked...
     $choice.on("click", (event) => {
@@ -175,6 +252,9 @@ function addChoice(choice, callback)
         $textBuffer.append("<hr/>");
 
         event.preventDefault();
+
+        // ROBIN: The Inky engine is about to place this choice text right back into the buffer, and we don't want to mistake it for a single line. Sooo...
+        ignoreNextSingleLine = true;
 
         callback();
     });
@@ -214,7 +294,7 @@ function addLineError(error, callback)
 }
 
 function addEvaluationResult(result, error)
-{   
+{
     var $result;
     if( error ) {
         $result = $(`<div class="evaluationResult error"><span>${error}</span></div>`);
@@ -245,4 +325,4 @@ exports.PlayerView = {
     addEvaluationResult: addEvaluationResult,
     showSessionView: showSessionView,
     previewStepBack: previewStepBack
-};  
+};
