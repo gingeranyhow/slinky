@@ -3,6 +3,7 @@ const app = electron.app
 const ipc = electron.ipcMain;
 const dialog = electron.dialog;
 const ProjectWindow = require("./projectWindow.js").ProjectWindow;
+const PrefsWindow = require("./prefsWindow.js").PrefsWindow;
 const DocumentationWindow = require("./documentationWindow.js").DocumentationWindow;
 const AboutWindow = require("./aboutWindow.js").AboutWindow;
 const appmenus = require('./appmenus.js');
@@ -52,6 +53,9 @@ app.on('ready', function () {
     });
 
     appmenus.setupMenus({
+        prefs: () => {
+            PrefsWindow.show();
+        },
         new: () => {
             ProjectWindow.createEmpty();
         },

@@ -6,12 +6,12 @@ const path = require("path");
 const Inklecate = require("./inklecate.js").Inklecate;
 
 const electronWindowOptions = {
-  width: 1300, 
-  height: 730, 
+  width: 1300,
+  height: 730,
   minWidth: 350,
   minHeight: 250,
   titleBarStyle: 'hidden',
-  title: "Inky"
+  title: "Soy Inky"
 };
 
 var windows = [];
@@ -81,7 +81,7 @@ ProjectWindow.prototype.openDevTools = function() {
 }
 
 ProjectWindow.createEmpty = function() {
-    return new ProjectWindow(); 
+    return new ProjectWindow();
 }
 
 ProjectWindow.focused = function() {
