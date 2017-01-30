@@ -54,7 +54,7 @@ InkProject.setEvents({
 
 // Wait for DOM to be ready before kicking most stuff off
 // (some of the views get confused otherwise)
-$(document).ready(() => { 
+$(document).ready(() => {
     if( InkProject.currentProject == null ) {
         InkProject.startNew();
 
@@ -154,7 +154,7 @@ LiveCompiler.setEvents({
             PlayerView.addTerminatingMessage("Here is some diagnostic information:", "error");
 
             // Make it a bit less verbose and concentrate on the useful stuff
-            // [0x000ea] in /Users/blah/blah/blah/blah/ink/ParsedHierarchy/FlowBase.cs:377 
+            // [0x000ea] in /Users/blah/blah/blah/blah/ink/ParsedHierarchy/FlowBase.cs:377
             // After replacement:
             // in FlowBase.cs line 377
             error = error.replace(/\[\w+\] in (?:[\w/]+?)(\w+\.cs):(\d+)/g, "in $1 line $2");
@@ -209,9 +209,9 @@ ToolbarView.setEvents({
     navigateBack: () => NavHistory.back(),
     navigateForward: () => NavHistory.forward(),
     selectIssue: gotoIssue,
-    stepBack: () => { 
+    stepBack: () => {
         PlayerView.previewStepBack();
-        LiveCompiler.stepBack(); 
+        LiveCompiler.stepBack();
     },
     rewind:   () => { LiveCompiler.rewind(); }
 });

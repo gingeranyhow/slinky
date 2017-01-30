@@ -218,6 +218,14 @@ function setupMenus(callbacks) {
           type: 'separator'
         },
         {
+          label: 'Preferences',
+          accelerator: 'CmdOrCtrl+,',
+          click: callbacks.prefs
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Services',
           role: 'services',
           submenu: []
@@ -249,7 +257,7 @@ function setupMenus(callbacks) {
         },
       ]
     });
-    
+
     var windowMenu = _.find(template, menu => menu.role == "window");
     windowMenu.submenu.push(
       {
