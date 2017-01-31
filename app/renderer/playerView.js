@@ -1,3 +1,6 @@
+// ROBIN: Needed so we can check char counts.
+const settings = require("electron-settings");
+
 const $ = window.jQuery = require('./jquery-2.2.3.min.js');
 
 var events = {};
@@ -95,11 +98,37 @@ function addTextSection(text)
 {
     var $paragraph = $("<p class='storyText'></p>");
 
+    var highlightedText;
+
     // Split individual words into span tags, so that they can be underlined
     // when the user holds down the alt key, and so that they can be individually
     // clicked in order to jump to the source.
     var splitIntoSpans = text.split(" ");
-    var textAsSpans = "<span>" + splitIntoSpans.join("</span> <span>") + "</span>";
+    var plainSpans = new Array();
+    var highlightedSpans = new Array();
+
+    if (settings.getSync("enforceCharCounts")) {
+        // ROBIN: Enforce character counts on this <p>.
+        let charCount = 0;
+        let charCutoff = settings.getSync("charCountDanger");
+        for (let span of splitIntoSpans) {
+            charCount += span.length;
+            if (charCount < charCutoff) {
+                plainSpans.push(span);
+            } else {
+                highlightedSpans.push(span);
+            }
+        }
+    } else {
+        // ROBIN: We are not enforcing any character counts, so...
+        plainSpans = splitIntoSpans;
+    }
+
+    var textAsSpans = "<span>" + plainSpans.join("</span> <span>") + "</span>";
+    if (highlightedSpans.length > 0) {
+        // ROBIN: Note the space at the front here. Fussy.
+        textAsSpans += " <span class='charCountWarning'>" + highlightedSpans.join("</span> <span class='charCountWarning'>") + "</span>";
+    }
 
     $paragraph.html(textAsSpans);
 

@@ -10,6 +10,8 @@ const appmenus = require('./appmenus.js');
 const forceQuitDetect = require('./forceQuitDetect');
 const Inklecate = require("./inklecate.js").Inklecate;
 
+const settings = require("electron-settings");
+
 function inkJSNeedsUpdating() {
     return false;
     // dialog.showMessageBox({
@@ -105,6 +107,14 @@ app.on('ready', function () {
     });
 
     let openedSpecificFile = false;
+
+    var mainPath = settings.getSync("mainPath");
+
+    if (mainPath) {
+        openedSpecificFile = true;
+        ProjectWindow.open(mainPath);
+    }
+
     if (process.platform == "win32" && process.argv.length > 1) {
         for (let i = 1; i < process.argv.length; i++) {
             var arg = process.argv[i];
@@ -119,6 +129,14 @@ app.on('ready', function () {
     if (!openedSpecificFile) {
         var w = ProjectWindow.createEmpty();
     }
+
+    settings.defaults({
+        charCountDanger: 280,
+        charCountCutoff: 560,
+        enforceCharCounts: true
+    });
+
+    settings.applyDefaultsSync();
 
     // Debug
     //w.openDevTools();

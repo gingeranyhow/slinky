@@ -655,6 +655,10 @@ img.issue-icon.warning {
   text-decoration: underline;
 }
 
+#player p .charCountWarning {
+  background-color: #FFDC00;
+}
+
 /* END ROBIN EDITS */
 
 #player p.tags {
