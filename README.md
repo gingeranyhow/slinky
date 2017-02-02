@@ -1,7 +1,10 @@
 This is Soy Inky, Robin's lightly customized version of Inky!
 
+<<<<<<< HEAD
 ![](resources/icon-small.jpg)
 
+=======
+>>>>>>> b14c0bf9bfd954688dd8bf4188671d3973645876
 You'll probably want to refer to the original Inky README [here](https://github.com/inkle/inky).
 
 ## License
