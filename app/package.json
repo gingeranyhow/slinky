@@ -1,6 +1,6 @@
 {
-  "name": "soy-inky",
-  "productName": "Soy Inky",
+  "name": "soy-mcinky",
+  "productName": "Soy McInky",
   "version": "0.8.0",
   "description": "An editor for ink",
   "main": "main-process/main.js",

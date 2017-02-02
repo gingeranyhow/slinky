@@ -1,10 +1,12 @@
-This is Soy Inky, Robin's lightly customized version of Inky!
+This is Soy McInky, Robin & Andrew's lightly customized version of Inky!
+
+![](resources/icon-small.jpg)
 
 You'll probably want to refer to the original Inky README [here](https://github.com/inkle/inky).
 
 ## License
 
-**Soy Inky**, like Inky, is released under the MIT license.
+**Soy McInky**, like Inky, is released under the MIT license.
 
 ### The MIT License (MIT)
 Copyright (c) 2016 inkle Ltd.
@@ -20,3 +22,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 *Inky is named after a black cat based in Cambridge, UK.*
 
 *Soy Inky is named after soy ink, which is made from soy beans. It's the kind of ink Robin uses with his Risograph.*
+
+*Soy McInky is named after nothing at all other than the fact that Andrew wanted to contribute.*
