@@ -266,7 +266,16 @@ function addTags(tags)
 
 function addChoice(choice, callback)
 {
-    var $choice = $("<a href='#'>"+choice.text+"</a>");
+    // Style the carrot tags
+    let carrotIndex = choice.text.indexOf(">>");
+    let text = choice.text;
+    if (carrotIndex != -1) {
+        text = text.substr(0, carrotIndex) + 
+               "<span class='carrotTags'>" +
+               text.substr(carrotIndex) +
+               "</span>";
+    }
+    var $choice = $("<a href='#'>"+text+"</a>");
 
     // Append the choice
     var $choicePara = $("<p class='choice'></p>");
