@@ -1,10 +1,10 @@
 {
-  "title": "Soy Inky",
+  "title": "Soy McInky",
   "icon": "Icon.icns",
   "background": "appdmg-background.png",
   "icon-size": 95,
   "contents": [
-    { "x": 107, "y": 92, "type": "file", "path": "../SoyInky-darwin-x64/SoyInky.app" },
+    { "x": 107, "y": 92, "type": "file", "path": "../SoyMcInky-darwin-x64/SoyMcInky.app" },
     { "x": 345, "y": 92, "type": "link", "path": "/Applications" }
   ]
 }

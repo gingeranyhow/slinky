@@ -231,14 +231,6 @@ function setupMenus(callbacks) {
           type: 'separator'
         },
         {
-          label: 'Preferences',
-          accelerator: 'CmdOrCtrl+,',
-          click: callbacks.prefs
-        },
-        {
-          type: 'separator'
-        },
-        {
           label: 'Services',
           role: 'services',
           submenu: []

@@ -11,7 +11,7 @@ const electronWindowOptions = {
   minHeight: 400,
   //maxWidth: 400,
   //maxHeight: 400,
-  title: "Soy Inky Prefs",
+  title: "Soy McInky Prefs",
   alwaysOnTop: true
 };
 
