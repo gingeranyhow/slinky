@@ -103,7 +103,22 @@ function addTextSection(text)
     // Split individual words into span tags, so that they can be underlined
     // when the user holds down the alt key, and so that they can be individually
     // clicked in order to jump to the source.
-    var splitIntoSpans = text.split(" ");
+    
+    // But first, let's parse out carrot tags so they are styled correctly but
+    // don't screw with the word count
+
+    // Split the line if we have a >>
+    var splitOnCarrotTags = text.split(">>");
+    var nonTagText = splitOnCarrotTags.shift();
+    // Reconstitute the rest of the line that has tags
+    var tagText = "";
+    if (splitOnCarrotTags.length > 0) {
+        tagText = ">>" + splitOnCarrotTags.join(">>");
+    }
+
+    var splitIntoSpans = nonTagText.split(" ");
+    var carrotTagSpans = tagText.split(" ");
+
     var plainSpans = new Array();
     var highlightedSpans = new Array();
 
@@ -128,6 +143,9 @@ function addTextSection(text)
     if (highlightedSpans.length > 0) {
         // ROBIN: Note the space at the front here. Fussy.
         textAsSpans += " <span class='charCountWarning'>" + highlightedSpans.join("</span> <span class='charCountWarning'>") + "</span>";
+    }
+    if (carrotTagSpans.length > 0) {
+        textAsSpans += " <span class='carrotTags'>" + carrotTagSpans.join("</span> <span class='carrotTags'>") + "</span";
     }
 
     $paragraph.html(textAsSpans);

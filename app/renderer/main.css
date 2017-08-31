@@ -659,6 +659,14 @@ img.issue-icon.warning {
   background-color: #FFDC00;
 }
 
+#player span.carrotTags {
+  color: #AAA;
+  font-family: monospace;
+}
+
+#main.hideTags #player span.carrotTags {
+    display: none;
+}
 /* END ROBIN EDITS */
 
 #player p.tags {
