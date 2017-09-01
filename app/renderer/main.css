@@ -641,18 +641,9 @@ img.issue-icon.warning {
   text-decoration: underline;
 }
 
-/* ROBIN EDITS */
-
-#player p.singleLine {
-  cursor: default;
-  color: #BBB;
-  transition: color 0.2s;
-  text-decoration: none;
-}
-
-#player p.singleLine:hover {
-  color: #555;
-  text-decoration: underline;
+/* MCSLINKY ADDITIONS */
+#player p {
+    clear: right;
 }
 
 #player p .charCountWarning {
@@ -662,12 +653,13 @@ img.issue-icon.warning {
 #player span.carrotTags {
   color: #AAA;
   font-family: monospace;
+  float: right;
 }
 
 #main.hideTags #player span.carrotTags {
     display: none;
 }
-/* END ROBIN EDITS */
+/* END MCSLINKY ADDITIONS */
 
 #player p.tags {
   color: #AAA;
