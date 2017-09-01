@@ -131,7 +131,7 @@ app.on('ready', function () {
     }
 
     settings.defaults({
-        charCountDanger: 280,
+        charCountDanger: 75,
         charCountCutoff: 560,
         enforceCharCounts: true
     });
