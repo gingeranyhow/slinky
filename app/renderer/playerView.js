@@ -205,17 +205,21 @@ function addChoice(choice, callback)
     // Style the carrot tags
     let carrotIndex = choice.text.indexOf(">>");
     let text = choice.text;
+    let $tags = null;
+
     if (carrotIndex != -1) {
-        text = text.substr(0, carrotIndex) +
-               "<span class='carrotTags'>" +
-               text.substr(carrotIndex) +
-               "</span>";
+        let tagText = text.substr(carrotIndex);
+        text = text.substr(0, carrotIndex);
+        $tags = $(`<span class='carrotTags'>${tagText}</span>`);
     }
     var $choice = $("<a href='#'>"+text+"</a>");
 
     // Append the choice
     var $choicePara = $("<p class='choice'></p>");
     $choicePara.append($choice);
+    if ($tags != null) {
+        $choicePara.append($tags);
+    }
     $textBuffer.append($choicePara);
 
     if( shouldAnimate() ) {

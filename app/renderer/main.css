@@ -654,6 +654,8 @@ img.issue-icon.warning {
   color: #AAA;
   font-family: monospace;
   float: right;
+  width: 40%;
+  text-align: right;
 }
 
 #main.hideTags #player span.carrotTags {
