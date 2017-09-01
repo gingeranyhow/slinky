@@ -1,6 +1,6 @@
 {
-  "name": "soy-mcinky",
-  "productName": "Soy McInky",
+  "name": "mcslinky",
+  "productName": "McSlinky",
   "version": "0.8.0",
   "description": "An editor for ink",
   "main": "main-process/main.js",
@@ -10,17 +10,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robinsloan/soy-inky.git"
+    "url": "git+https://github.com/awmcclain/slinky.git"
   },
   "keywords": [
     "ink",
     "narrative",
     "editor"
   ],
-  "author": "inkle Ltd and Robin Sloan",
+  "author": "inkle Ltd and Andrew McClain & Robin Sloan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/robinsloan/soy-inky/issues"
+    "url": "https://github.com/awmcclain/slinky/issues"
   },
   "devDependencies": {
     "electron": "^1.4.3",

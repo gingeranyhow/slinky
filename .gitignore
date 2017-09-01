@@ -1,9 +1,9 @@
 node_modules
 *.sublime-workspace
-Soy\ McInky-darwin-x64
-Soy\ McInky-win32-x64
-Soy\ McInky-win32-ia32
-Soy-McInky-linux-x64
-Soy_McInky_windows.zip
+McSlinky-darwin-x64
+McSlinky-win32-x64
+McSlinky-win32-ia32
+McSlinky-linux-x64
+McSlinky_windows.zip
 ReleaseUpload
 app/renderer/documentation/

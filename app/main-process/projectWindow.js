@@ -11,7 +11,7 @@ const electronWindowOptions = {
   minWidth: 350,
   minHeight: 250,
   titleBarStyle: 'hidden',
-  title: "Soy McInky"
+  title: "McSlinky"
 };
 
 var windows = [];

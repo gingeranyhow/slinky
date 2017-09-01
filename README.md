@@ -1,4 +1,4 @@
-This is Soy McInky, Robin & Andrew's lightly customized version of Inky!
+This is McSlinky, Robin & Andrew's lightly customized version of Inky!
 
 ![](resources/icon-small.jpg)
 
@@ -6,7 +6,7 @@ You'll probably want to refer to the original Inky README [here](https://github.
 
 ## License
 
-**Soy McInky**, like Inky, is released under the MIT license.
+**McSlinky**, like Inky, is released under the MIT license.
 
 ### The MIT License (MIT)
 Copyright (c) 2016 inkle Ltd.
@@ -23,4 +23,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 *Soy Inky is named after soy ink, which is made from soy beans. It's the kind of ink Robin uses with his Risograph.*
 
-*Soy McInky is named after nothing at all other than the fact that Andrew wanted to contribute.*
+*McSlinky is named, well, for vanity.*

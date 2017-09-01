@@ -20,7 +20,7 @@ rm -rf ReleaseUpload
 ( cd app && npm install )
 
 # Mac
-electron-packager app SoyMcInky --platform=darwin --arch=x64 --icon=resources/Icon.icns --extend-info=resources/info.plist --app-bundle-id=com.inkle.inky --prune --asar.unpackDir="main-process/ink" --ignore="inklecate_win.exe"
+electron-packager app McSlinky --platform=darwin --arch=x64 --icon=resources/Icon.icns --extend-info=resources/info.plist --app-bundle-id=com.inkle.inky --prune --asar.unpackDir="main-process/ink" --ignore="inklecate_win.exe"
 
 # Windows 64 bit (requires Wine - `brew install wine`)
 # electron-packager app Inky --platform=win32  --arch=x64 --icon=resources/Icon1024.png.ico --prune --asar.unpackDir="main-process/ink" --ignore="inklecate_mac" --win32metadata.ProductName="Inky" --win32metadata.CompanyName="inkle Ltd" --win32metadata.FileDescription="Inky" --win32metadata.OriginalFilename="Inky" --win32metadata.InternalName="Inky"
@@ -42,9 +42,9 @@ mkdir -p ReleaseUpload
 # On Mac, create a DMG
 # Requires appdmg: npm install -g appdmg
 # https://www.npmjs.com/package/appdmg
-appdmg resources/appdmg.json ReleaseUpload/SoyMcInky_mac.dmg
+appdmg resources/appdmg.json ReleaseUpload/McSlinky_mac.dmg
 
-# zip -r ReleaseUpload/SoyMcInky-mac.zip SoyMcInky-darwin-x64/
+# zip -r ReleaseUpload/McSlinky-mac.zip McSlinky-darwin-x64/
 
 # Remove .icns again
 rm resources/Icon.icns
