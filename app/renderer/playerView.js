@@ -113,6 +113,12 @@ function addTextSection(text)
         tagText = ">>" + splitOnCarrotTags.join(">>");
     }
 
+    // If all we have left is a character name, style that like a tag
+    if (/[A-Z]+:\s*$/.test(nonTagText)) {
+        tagText = nonTagText + tagText;
+        nonTagText = "";
+    }
+
     var splitIntoSpans = nonTagText.split(" ");
 
     var plainSpans = new Array();
