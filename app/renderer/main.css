@@ -641,17 +641,35 @@ img.issue-icon.warning {
   text-decoration: underline;
 }
 
+
 /* MCSLINKY ADDITIONS */
 #player p {
     clear: right;
 }
+
+#player p.choice {
+    display: flex;
+}
+
+#player p.choice a {
+  flex-basis: 60%;
+  padding-left: 15%;
+}
+
+#player p.choice span.carrotTags {
+  flex-basis: 40%;
+
+}
+
 
 #player p .charCountWarning {
   background-color: #FFDC00;
 }
 
 #player span.carrotTags {
-  color: #AAA;
+  // color: #AAA;
+  color: #555;
+  background-color: #b8b6b8;
   font-family: monospace;
   float: right;
   width: 40%;
