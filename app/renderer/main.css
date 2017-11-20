@@ -650,6 +650,18 @@ img.issue-icon.warning {
   background-color: #FFDC00;
 }
 
+#player p .characterName {
+  color: #A0522D;
+}
+
+#player p .Lina::before {
+  content: '👩🏽‍🎤 ';
+}
+
+#player p .notLina::before {
+  content: '👤 ';
+}
+
 #player span.carrotTags {
   color: #AAA;
   font-family: monospace;
