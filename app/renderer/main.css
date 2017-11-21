@@ -656,24 +656,23 @@ img.issue-icon.warning {
   padding-left: 15%;
 }
 
-#player p.choice span.carrotTags {
-  flex-basis: 40%;
-
-}
-
-
 #player p .charCountWarning {
   background-color: #FFDC00;
+}
+#player div.tagContainer {
+  flex-basis: 40%;
+  float: right;
+  max-width: 40%;
+  text-align: right;
 }
 
 #player span.carrotTags {
   // color: #AAA;
   color: #555;
-  background-color: #b8b6b8;
+  border-radius: 2px;
+  background-color: #f5f5f4;
   font-family: monospace;
-  float: right;
-  width: 40%;
-  text-align: right;
+  padding:2px;
 }
 
 #main.hideTags #player span.carrotTags {
