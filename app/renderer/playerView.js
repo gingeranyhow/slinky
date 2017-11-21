@@ -133,16 +133,14 @@ function addTextSection(text)
         let charCount = 0;
         const MAX_NARRATION_COUNT = settings.getSync("narrativeCountDanger");
         const MAX_DIALOGUE_COUNT = settings.getSync("dialogCountDanger");
+        let dangerousWordCount = isDialogueLine ? MAX_DIALOGUE_COUNT : MAX_NARRATION_COUNT;
 
-        console.log(MAX_NARRATION_COUNT, MAX_DIALOGUE_COUNT, arrayOfWords)
-        const dangerousWordCount = isDialogueLine ? MAX_DIALOGUE_COUNT : MAX_NARRATION_COUNT;
         for (var i = 0; i < arrayOfWords.length; i++) {
           var currentWord = arrayOfWords[i];
           charCount += currentWord.length;
           if (charCount < dangerousWordCount) {
               plainSpans.push(currentWord);
           } else {
-            console.log (currentWord, charCount, dangerousWordCount);
             highlightedSpans.push(currentWord);
           }
         }
@@ -151,9 +149,9 @@ function addTextSection(text)
         plainSpans = arrayOfWords;
     }
 
-    var isLina = (arrayOfWords[0] === 'LINA:');
-
+    let isLina = (arrayOfWords[0] === 'LINA:');
     let initialSpan = "<span>";
+    
     if (isDialogueLine && isLina) {
       initialSpan = "<span class='characterName Lina'>‍"
     } else if (isDialogueLine) {
