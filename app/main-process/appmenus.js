@@ -60,6 +60,14 @@ function setupMenus(callbacks) {
           type: 'separator'
         },
         {
+          label: 'Push to NEOCAB player',
+          enabled: callbacks.isFocusedWindow,
+          click: callbacks.saveToNeo
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Close',
           accelerator: 'CmdOrCtrl+W',
           role: 'close'

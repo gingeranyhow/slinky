@@ -86,6 +86,11 @@ app.on('ready', function () {
             var win = ProjectWindow.focused();
             if (win) win.exportJSOnly();
         },
+        saveToNeo: () => {
+            if( inkJSNeedsUpdating() ) return;
+            var win = ProjectWindow.focused();
+            if (win) win.saveToNeo();
+        },
         toggleTags: (item, focusedWindow, event) => {
             focusedWindow.webContents.send("set-tags-visible", item.checked);
         },

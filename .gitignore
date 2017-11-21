@@ -7,3 +7,5 @@ McSlinky-linux-x64
 McSlinky_windows.zip
 ReleaseUpload
 app/renderer/documentation/
+.DS_Store
+npm-debug.log
