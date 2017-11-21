@@ -651,15 +651,11 @@ img.issue-icon.warning {
 }
 
 #player p .characterName {
-  color: #A0522D;
+  color: #8e5d0e;
 }
 
-#player p .Lina::before {
-  content: '👩🏽‍🎤 ';
-}
-
-#player p .notLina::before {
-  content: '👤 ';
+#player p .characterName.Lina {
+  color: #1D0C6F;
 }
 
 #player span.carrotTags {

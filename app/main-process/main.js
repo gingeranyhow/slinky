@@ -131,8 +131,8 @@ app.on('ready', function () {
     }
 
     settings.defaults({
-        charCountDanger: 75,
-        dialogueCountDanger: 25,
+        charCountDanger: 140,
+        dialogueCountDanger: 75,
         charCountCutoff: 560,
         enforceCharCounts: true
     });
