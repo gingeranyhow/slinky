@@ -131,8 +131,10 @@ function addTextSection(text)
     if (settings.getSync("enforceCharCounts")) {
         // ROBIN: Enforce character counts on this <p>.
         let charCount = 0;
-        const MAX_NARRATION_COUNT = settings.getSync("charCountDanger");
-        const MAX_DIALOGUE_COUNT = settings.getSync("dialogueCountDanger");
+        const MAX_NARRATION_COUNT = settings.getSync("narrativeCountDanger");
+        const MAX_DIALOGUE_COUNT = settings.getSync("dialogCountDanger");
+
+        console.log(MAX_NARRATION_COUNT, MAX_DIALOGUE_COUNT, arrayOfWords)
         const dangerousWordCount = isDialogueLine ? MAX_DIALOGUE_COUNT : MAX_NARRATION_COUNT;
         for (var i = 0; i < arrayOfWords.length; i++) {
           var currentWord = arrayOfWords[i];
@@ -140,7 +142,8 @@ function addTextSection(text)
           if (charCount < dangerousWordCount) {
               plainSpans.push(currentWord);
           } else {
-              highlightedSpans.push(currentWord);
+            console.log (currentWord, charCount, dangerousWordCount);
+            highlightedSpans.push(currentWord);
           }
         }
     } else {
@@ -156,7 +159,7 @@ function addTextSection(text)
     } else if (isDialogueLine) {
       initialSpan = "<span class='characterName notLina'>"
     }
-    
+
     var textAsSpans = initialSpan + plainSpans.join("</span> <span>") + "</span>";
 
     if (highlightedSpans.length > 0) {
