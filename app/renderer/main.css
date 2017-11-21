@@ -626,10 +626,6 @@ img.issue-icon.warning {
   margin: 0 auto;
 }
 
-#player p.choice {
-  text-align: center;
-}
-
 #player p.choice a {
   color: #BBB;
   transition: color 0.2s;
@@ -647,32 +643,28 @@ img.issue-icon.warning {
     clear: right;
 }
 
-#player p.choice {
-    display: flex;
+#player p.choice a {
+  color: #555;
+  border-radius: 3px;
+  background-color: #f5f5f4;
+  padding: 4px;
+  display:inline-block;
 }
 
-#player p.choice a {
-  flex-basis: 60%;
-  padding-left: 15%;
+#player .choiceOption {
+  padding-left: 5%;
 }
 
 #player p .charCountWarning {
   background-color: #FFDC00;
 }
-#player div.tagContainer {
-  flex-basis: 40%;
+
+#player span.carrotTags {
   float: right;
   max-width: 40%;
   text-align: right;
-}
-
-#player span.carrotTags {
-  // color: #AAA;
-  color: #555;
-  border-radius: 2px;
-  background-color: #f5f5f4;
+  color: #AAA;
   font-family: monospace;
-  padding:2px;
 }
 
 #main.hideTags #player span.carrotTags {

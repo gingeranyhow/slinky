@@ -147,7 +147,7 @@ function addTextSection(text)
         textAsSpans += " <span class='charCountWarning'>" + highlightedSpans.join("</span> <span class='charCountWarning'>") + "</span>";
     }
     if (tagText.length > 0) {
-        textAsSpans += ` <div class='tagContainer'><span class='carrotTags'>${tagText}</span</div>`;
+        textAsSpans += ` <span class='carrotTags'>${tagText}</span`;
     }
 
     $paragraph.html(textAsSpans);
@@ -216,9 +216,9 @@ function addChoice(choice, callback)
     if (carrotIndex != -1) {
         let tagText = text.substr(carrotIndex);
         text = text.substr(0, carrotIndex);
-        $tags = $(`<div class='tagContainer'><span class='carrotTags'>${tagText}</span></div>`);
+        $tags = $(`<span class='carrotTags'>${tagText}</span>`);
     }
-    var $choice = $("<a href='#'>"+text+"</a>");
+    var $choice = $("<span class='choiceOption'><a href='#'>"+text+"</a></span>");
 
     // Append the choice
     var $choicePara = $("<p class='choice'></p>");
