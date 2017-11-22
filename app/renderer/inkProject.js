@@ -12,6 +12,7 @@ const NavView = require("./navView.js").NavView;
 
 const InkFile = require("./inkFile.js").InkFile;
 const LiveCompiler = require("./liveCompiler.js").LiveCompiler;
+var AWS = require('aws-sdk');
 
 // -----------------------------------------------------------------
 // InkProject
@@ -252,8 +253,32 @@ function copyFile(source, destination, transform) {
     });
 }
 
+function sendJSONtoServer(file) {
+  console.log('attempt to contact AWS')
+  AWS.config.loadFromPath('./config.json');
+  // Read in the file, convert it to base64, store to S3
+  fs.readFile(file, function (err, data) {
+    if (err) { throw err; }
+
+    var base64data = new Buffer(data, 'binary');
+
+    var s3 = new AWS.S3();
+    var myBucket = 'chanceagency'
+    var myKey = file;
+    s3.client.putObject({
+      Bucket: myBucket,
+      Key: file,
+      Body: base64data,
+      ACL: 'public-read'
+    },function (resp) {
+      console.log(arguments);
+      console.log('Successfully uploaded package.');
+    });
+  });
+}
+
 // exportType is "json", "web", or "js"
-// NEW CUSTOM export type is "neo"
+// NEW CUSTOM export type is "toserver"
 InkProject.prototype.export = function(exportType) {
 
     // Always start by building the JSON
@@ -269,7 +294,7 @@ InkProject.prototype.export = function(exportType) {
 
         if( this.defaultExportPath ) {
             var pathObj = path.parse(this.defaultExportPath);
-            if( exportType == "json" || exportType === "neo" ) {
+            if( exportType == "json" || exportType === "toserver" ) {
                 pathObj.ext = ".json";
             } else if( exportType == "js" ) {
                 // If we already have a default export path specifically for JS files
@@ -290,7 +315,7 @@ InkProject.prototype.export = function(exportType) {
             defaultPath: this.defaultExportPath
         }
 
-        if( exportType == "json" || exportType == "neo") {
+        if( exportType == "json" || exportType == "toserver") {
             saveOptions.filters = [
                 { name: "JSON files", extensions: ["json"] }
             ]
@@ -300,48 +325,52 @@ InkProject.prototype.export = function(exportType) {
             ]
         }
 
-        // TODO: here's where to push to a server!
-        dialog.showSaveDialog(remote.getCurrentWindow(), saveOptions, (targetSavePath) => {
-            if( targetSavePath ) {
-                this.defaultExportPath = targetSavePath;
+        // TODO: CHANGE HERE here's where to push to a server!
+        if( exportType == "toserver") {
+          sendJSONtoServer(compiledJsonTempPath);
+        } else {
+          dialog.showSaveDialog(remote.getCurrentWindow(), saveOptions, (targetSavePath) => {
+              if( targetSavePath ) {
+                  this.defaultExportPath = targetSavePath;
 
-                // JSON export - simply move compiled json into place
-                // Change this for neo
-                if( exportType == "json" || exportType == "js" || exportType == "neo") {
-                    fs.stat(targetSavePath, (err, stats) => {
+                  // JSON export - simply move compiled json into place
+                  // Change this for neo
+                  if( exportType == "json" || exportType == "js" || exportType == "neo") {
+                      fs.stat(targetSavePath, (err, stats) => {
 
-                        // File already exists, or there's another error
-                        // (error when code == ENOENT means file doens't exist, which is fine)
-                        if( !err || err.code != "ENOENT" ) {
-                            if( err ) alert("Sorry, could not save to "+targetSavePath);
+                          // File already exists, or there's another error
+                          // (error when code == ENOENT means file doens't exist, which is fine)
+                          if( !err || err.code != "ENOENT" ) {
+                              if( err ) alert("Sorry, could not save to "+targetSavePath);
 
-                            if( stats.isFile() ) fs.unlinkSync(targetSavePath);
+                              if( stats.isFile() ) fs.unlinkSync(targetSavePath);
 
-                            if( stats.isDirectory() ) {
-                                alert("Could not save because directory exists with the given name");
-                                return
-                            }
-                        }
+                              if( stats.isDirectory() ) {
+                                  alert("Could not save because directory exists with the given name");
+                                  return
+                              }
+                          }
 
-                        // JS file:
-                        if( exportType == "js" ) {
-                            this.convertJSONToJS(compiledJsonTempPath, targetSavePath);
-                        }
+                          // JS file:
+                          if( exportType == "js" ) {
+                              this.convertJSONToJS(compiledJsonTempPath, targetSavePath);
+                          }
 
-                        // JSON: Just copy into place
-                        else {
-                            copyFile(compiledJsonTempPath, targetSavePath);
-                        }
+                          // JSON: Just copy into place
+                          else {
+                              copyFile(compiledJsonTempPath, targetSavePath);
+                          }
 
-                    });
-                }
+                      });
+                  }
 
-                // Web export
-                else {
-                    this.buildForWeb(compiledJsonTempPath, targetSavePath);
-                }
-            }
-        });
+                  // Web export
+                  else {
+                      this.buildForWeb(compiledJsonTempPath, targetSavePath);
+                  }
+              }
+          });
+        }
     });
 }
 
@@ -358,7 +387,7 @@ InkProject.prototype.exportJSOnly = function() {
 }
 
 InkProject.prototype.saveToNeo = function() {
-    this.export("neo");
+    this.export("toserver");
 }
 
 InkProject.prototype.jsFilename = function() {
@@ -624,7 +653,7 @@ ipc.on("project-export-js-only", (event) => {
     }
 });
 
-ipc.on("project-save-to-neo", (event) => {
+ipc.on("project-export-send-to-server", (event) => {
     if( InkProject.currentProject ) {
         InkProject.currentProject.saveToNeo();
     }

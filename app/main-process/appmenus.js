@@ -60,7 +60,7 @@ function setupMenus(callbacks) {
           type: 'separator'
         },
         {
-          label: 'Push to NEOCAB player',
+          label: 'Push latest to NEOCAB player',
           enabled: callbacks.isFocusedWindow,
           click: callbacks.saveToNeo
         },

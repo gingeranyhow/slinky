@@ -63,7 +63,7 @@ ProjectWindow.prototype.exportForWeb = function() {
 }
 
 ProjectWindow.prototype.saveToNeo = function() {
-    this.browserWindow.webContents.send('project-export-save-to-neo');
+    this.browserWindow.webContents.send('project-export-send-to-server');
 }
 
 ProjectWindow.prototype.exportJSOnly = function() {
