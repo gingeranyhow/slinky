@@ -254,8 +254,8 @@ function copyFile(source, destination, transform) {
 }
 
 function sendJSONtoServer(file) {
-  console.log('attempt to contact AWS');
-  AWS.config.loadFromPath('./config.json');
+  // Moving configuration files to personal
+  // AWS.config.loadFromPath('./config.json');
 
   // Read in the file, convert it to base64, store to S3
   fs.readFile(file, function (err, data) {
@@ -265,7 +265,8 @@ function sendJSONtoServer(file) {
 
     var s3 = new AWS.S3();
     var bucketName = 'chanceagency'
-    var keyName = 'GingerTest-64' + Date.now() + '.json';
+    var keyName = 'NeoCab-' + Date.now() + '.json';
+
     console.log(keyName);
     var params = {
       Bucket: bucketName,
@@ -273,8 +274,11 @@ function sendJSONtoServer(file) {
       Body: base64data
     }
     s3.putObject(params, function(err, data) {
-    if (err)
-      console.log(err)
+    if (err) {
+      alert('Could not uploading file to server. See console for error message.')
+      console.log(err);
+    }
+
     else
       console.log("Successfully uploaded data to " + bucketName + "/" + keyName);
     });
@@ -330,9 +334,7 @@ InkProject.prototype.export = function(exportType) {
             ]
         }
 
-        // TODO: CHANGE HERE here's where to push to a server!
-        if( exportType == "toserver") {
-          console.log('default export:', compiledJsonTempPath);
+        if (exportType == "toserver") {
           sendJSONtoServer(compiledJsonTempPath);
         } else {
           dialog.showSaveDialog(remote.getCurrentWindow(), saveOptions, (targetSavePath) => {
