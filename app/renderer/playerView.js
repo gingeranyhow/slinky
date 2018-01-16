@@ -139,7 +139,7 @@ function addTextSection(text)
           var currentWord = arrayOfWords[i];
           charCount += currentWord.length;
           if (charCount < dangerousWordCount) {
-              plainSpans.push(currentWord);
+            plainSpans.push(currentWord);
           } else {
             highlightedSpans.push(currentWord);
           }
@@ -155,7 +155,7 @@ function addTextSection(text)
     if (isDialogueLine && isLina) {
       initialSpan = "<span class='characterName Lina'>‍"
     } else if (isDialogueLine) {
-      initialSpan = "<span class='characterName notLina'>"
+      initialSpan = "<span class='characterName'>"
     }
 
     var textAsSpans = initialSpan + plainSpans.join("</span> <span>") + "</span>";
