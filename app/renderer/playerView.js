@@ -218,7 +218,7 @@ function addChoice(choice, callback)
         text = text.substr(0, carrotIndex);
         $tags = $(`<span class='carrotTags'>${tagText}</span>`);
     }
-    var $choice = $("<a href='#'>"+text+"</a>");
+    var $choice = $("<span class='choiceOption'><a href='#'>"+text+"</a></span>");
 
     // Append the choice
     var $choicePara = $("<p class='choice'></p>");

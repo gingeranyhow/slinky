@@ -626,10 +626,6 @@ img.issue-icon.warning {
   margin: 0 auto;
 }
 
-#player p.choice {
-  text-align: center;
-}
-
 #player p.choice a {
   color: #BBB;
   transition: color 0.2s;
@@ -641,9 +637,22 @@ img.issue-icon.warning {
   text-decoration: underline;
 }
 
+
 /* MCSLINKY ADDITIONS */
 #player p {
     clear: right;
+}
+
+#player p.choice a {
+  color: #555;
+  border-radius: 3px;
+  background-color: #f5f5f4;
+  padding: 4px;
+  display:inline-block;
+}
+
+#player .choiceOption {
+  padding-left: 5%;
 }
 
 #player p .charCountWarning {
@@ -651,11 +660,11 @@ img.issue-icon.warning {
 }
 
 #player span.carrotTags {
+  float: right;
+  max-width: 40%;
+  text-align: right;
   color: #AAA;
   font-family: monospace;
-  float: right;
-  width: 40%;
-  text-align: right;
 }
 
 #main.hideTags #player span.carrotTags {
