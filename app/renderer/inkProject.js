@@ -14,7 +14,7 @@ const InkFile = require("./inkFile.js").InkFile;
 const LiveCompiler = require("./liveCompiler.js").LiveCompiler;
 
 const settings = require("electron-settings");
-const { spawn } = require('child_process');
+const child_process = require('child_process');
 
 // -----------------------------------------------------------------
 // InkProject
@@ -36,6 +36,7 @@ function InkProject(mainInkFilePath) {
     EditorView.setFiles(this.files);
     this.showInkFile(this.mainInk);
 
+    this.runnerProcess = null;
     this.startFileWatching();
 }
 
@@ -349,16 +350,73 @@ InkProject.prototype.export = function(exportType, callback) {
     });
 }
 InkProject.prototype.launchRunner = function() {
+    var inkRunnerPath = settings.getSync("inkRunner");
+    // Set the launcher path
+    if (!inkRunnerPath) {
+        var selectedFiles = dialog.showOpenDialog(remote.getCurrentWindow(), {
+            defaultPath: inkRunnerPath,
+            message: "Select Ink Runner",
+            properties: ["openFile"]
+        });
+        // selectedFiles is an array
+        if (selectedFiles.length) {
+            var inkRunnerPath = selectedFiles[0];
+            settings.setSync("inkRunner", inkRunnerPath);
+            this.exportAndLaunch(inkRunnerPath);
+        }
+    } else {
+        this.exportAndLaunch(inkRunnerPath);
+    }
+}
+
+InkProject.prototype.exportAndLaunch = function(inkRunnerPath) {
     var streamingAssetsPath = "Contents/Resources/Data/StreamingAssets";
     var compiledJSONName = "runtime.json";
-    var inkRunnerPath = settings.getSync("inkRunner");
-    this.defaultExportPath = path.join(inkRunnerPath, streamingAssetsPath, compiledJSONName);
-    console.log(this.defaultExportPath);
-    this.export("json", () => {
-        const open = spawn('open', [inkRunnerPath]);
-        open.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
+    var runtimeJSONPath = path.join(inkRunnerPath, streamingAssetsPath, compiledJSONName);
+    console.log(runtimeJSONPath);
+
+    LiveCompiler.exportJson((err, compiledJsonTempPath) => {
+        if (err) {
+            alert("Could not compile JSON: " + err);
+            return;
+        }
+        fs.stat(runtimeJSONPath, (err, stats) => {
+
+            // File already exists, or there's another error
+            // (error when code == ENOENT means file doens't exist, which is fine)
+            if (!err || err.code != "ENOENT") {
+                if (err) alert("Sorry, could not save to " + runtimeJSONPath);
+
+                if (stats.isFile()) fs.unlinkSync(runtimeJSONPath);
+
+                if (stats.isDirectory()) {
+                    alert("Could not save because directory exists with the given name");
+                    return
+                }
+            }
+
+            copyFile(compiledJsonTempPath, runtimeJSONPath);
+
         });
+
+        if (this.runnerName) {
+            var command = "'quit app \""+this.runnerName+"\"'";
+            console.log("Killing runner");
+            var killer = child_process.spawnSync('pkill', [this.runnerName]);
+            this.runnerName = null;
+            // HACK: Give pkill time to settle
+            setTimeout(() => {this.spawnRunner(inkRunnerPath)}, 50);
+        }
+        this.spawnRunner(inkRunnerPath);
+    });
+}
+
+InkProject.prototype.spawnRunner = function(inkRunnerPath) {
+   console.log("Spawning runner");
+    this.runnerName = path.basename(inkRunnerPath, '.app');
+    var process = child_process.spawn('open', [inkRunnerPath]);
+    process.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
     });
 
 }
