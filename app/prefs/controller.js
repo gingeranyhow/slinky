@@ -30,7 +30,13 @@ $(document).ready(() => {
       $("#mainPathDisplay").html("(None selected)");
     }
   });
-
+    settings.get("inkRunner").then(val => {
+        if (val) {
+            $("#inkRunnerDisplay").html(val);
+        } else {
+            $("#inkRunnerDisplay").html("(None selected)");
+        }
+    });
   settings.get("charCountDanger").then( val => {
     $("#charCountDanger").val(val);
   });
@@ -74,5 +80,15 @@ $(document).ready(() => {
     event.preventDefault();
   });
 
+    $("#locateInkRunner").on("click", (event) => {
+        remote.getCurrentWindow().setSheetOffset(0);
+
+        var selectedFiles = dialog.showOpenDialog(remote.getCurrentWindow(), { properties: ["openFile"] });
+        // selectedFiles is an array
+        settings.set("inkRunner", selectedFiles[0]);
+        $("#inkRunnerDisplay").html(selectedFiles[0]);
+
+        event.preventDefault();
+    });
 });
 

@@ -54,6 +54,10 @@ ProjectWindow.prototype.save = function() {
     this.browserWindow.webContents.send('project-save');
 }
 
+ProjectWindow.prototype.launchRunner = function() {
+    this.browserWindow.webContents.send('launch-runner');
+}
+
 ProjectWindow.prototype.exportJson = function() {
     this.browserWindow.webContents.send('project-export');
 }

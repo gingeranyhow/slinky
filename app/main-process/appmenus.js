@@ -41,6 +41,15 @@ function setupMenus(callbacks) {
           type: 'separator'
         },
         {
+          label: 'Launch Ink Runner',
+          accelerator: 'CmdOrCtrl+B',
+          enabled: callbacks.isFocusedWindow,
+          click: callbacks.launchRunner
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Export to JSON...',
           accelerator: 'CmdOrCtrl+Shift+S',
           enabled: callbacks.isFocusedWindow,

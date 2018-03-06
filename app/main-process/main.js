@@ -72,6 +72,10 @@ app.on('ready', function () {
             var win = ProjectWindow.focused();
             if (win) win.save();
         },
+        launchRunner: () => {
+            var win = ProjectWindow.focused();
+            if (win) win.launchRunner();
+        },
         exportJson: () => {
             var win = ProjectWindow.focused();
             if (win) win.exportJson();
