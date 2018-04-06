@@ -19,6 +19,14 @@
             "sourceMaps": false,
             "outDir": null
         },
+	  {
+              "name": "Electron: Renderer",
+              "type": "chrome",
+              "request": "attach",
+              "port": 9223,
+              "webRoot": "${workspaceFolder}",
+              "timeout": 30000
+	  },
         {
             "name": "Attach",
             "type": "node",
@@ -26,6 +34,15 @@
             "port": 5858,
             "sourceMaps": false,
             "outDir": null
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Inky: All",
+            "configurations": [
+                "Inky",
+                "Electron: Renderer"
+            ]
         }
     ]
 }

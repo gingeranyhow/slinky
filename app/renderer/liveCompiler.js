@@ -47,7 +47,8 @@ function buildCompileInstruction() {
         mainName: project.mainInk.filename(),
         updatedFiles: {},
         sessionId: `${namespace}_${sessionIdx}`,
-        namespace: namespace
+        namespace: namespace,
+        allFiles: {} // We pass this to the linter to lint over all the included files
     };
 
     project.files.forEach((inkFile) => {
@@ -57,6 +58,7 @@ function buildCompileInstruction() {
             compileInstruction.updatedFiles[inkFile.relativePath()] = inkFile.getValue();
             inkFile.compilerVersionDirty = false;
         }
+        compileInstruction.allFiles[inkFile.relativePath()] = inkFile.getValue();
     });
 
     return compileInstruction;
@@ -147,13 +149,19 @@ function evaluateExpression(expressionText, callback) {
 // Do first compile
 // Really just for debug when loading ink immediately
 // other actions will cause editor changes
-setTimeout(reloadInklecateSession, 1000);
+setTimeout(firstLoad, 1000);
+
+function firstLoad() {
+    console.log("First load");
+    reloadInklecateSession();
+}
 
 // compile loop - detect changes every 0.25 and make sure
 // user has paused before actually compiling
 setInterval(() => {
     if( lastEditorChange != null && Date.now() - lastEditorChange > 500 ) {
         lastEditorChange = null;
+        console.log("Live compile timeout");
         reloadInklecateSession();
     }
 }, 250);

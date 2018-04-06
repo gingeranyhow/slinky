@@ -7,6 +7,7 @@ const electron = require('electron');
 const ipc = electron.ipcMain;
 const util = require('util');
 const mkdirp = require('mkdirp');
+const linter = require('../linter/ink-linter.js');
 
 // inklecate is packaged outside of the main asar bundle since it's executable
 const inklecateNames = {
@@ -37,7 +38,9 @@ function compile(compileInstruction, requester) {
 
     var sessionId = compileInstruction.sessionId;
 
+    
     console.log(`Launching inklecate for session id '${sessionId}'`);
+    var lintOutput = linter.lintFilesFromInky(compileInstruction.allFiles);
 
     var uniqueDirPath = path.join(tempInkPath, compileInstruction.namespace);
 
@@ -133,6 +136,8 @@ function compile(compileInstruction, requester) {
         text = text.replace(/^\uFEFF/, '');
         if( text.length == 0 ) return;
 
+        text += lintOutput;
+
         var lines = text.split('\n');
 
         for(var i=0; i<lines.length; ++i) {
@@ -147,7 +152,9 @@ function compile(compileInstruction, requester) {
 
             if( errorMatches ) {
                 var errorMessage = errorMatches[5];
+                console.log(`${sessionId} Found error: ${errorMessage}, ${errorMatches[3]}`);
                 if( session.evaluatingExpression ) {
+                    console.log("Play-evaluated-expression-error");
                     requester.send('play-evaluated-expression-error', errorMessage, sessionId);
                 } else {
                     inkErrors.push({
