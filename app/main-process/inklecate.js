@@ -40,7 +40,6 @@ function compile(compileInstruction, requester) {
 
     
     console.log(`Launching inklecate for session id '${sessionId}'`);
-    var lintOutput = linter.lintFilesFromInky(compileInstruction.allFiles);
 
     var uniqueDirPath = path.join(tempInkPath, compileInstruction.namespace);
 
@@ -107,10 +106,14 @@ function compile(compileInstruction, requester) {
     playProcess.stdout.setEncoding('utf8');
 
     var inkErrors = [];
+    var lintOutput = linter.lintFilesFromInky(compileInstruction.allFiles);
+    var processedLintOutput = false;
 
     var sendAnyErrors = () => {
         if( sessions[sessionId] && inkErrors.length > 0 ) {
+            console.log(`Sending errors for ${sessionId}`);
             requester.send('play-generated-errors', inkErrors, sessionId);
+            console.log("Clearing errors");
             inkErrors = [];
         }
     };
@@ -136,7 +139,11 @@ function compile(compileInstruction, requester) {
         text = text.replace(/^\uFEFF/, '');
         if( text.length == 0 ) return;
 
-        text += lintOutput;
+        if (processedLintOutput == false) {
+            // Append the new text to the linted output, but only the first time
+            text = lintOutput + text;
+            processedLintOutput = true;
+        }
 
         var lines = text.split('\n');
 
@@ -152,7 +159,7 @@ function compile(compileInstruction, requester) {
 
             if( errorMatches ) {
                 var errorMessage = errorMatches[5];
-                console.log(`${sessionId} Found error: ${errorMessage}, ${errorMatches[3]}`);
+                console.log(`${sessionId} Found ${errorMatches[1]}: ${errorMessage}, ${errorMatches[3]}`);
                 if( session.evaluatingExpression ) {
                     console.log("Play-evaluated-expression-error");
                     requester.send('play-evaluated-expression-error', errorMessage, sessionId);
