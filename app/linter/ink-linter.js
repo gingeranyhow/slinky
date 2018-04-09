@@ -138,7 +138,7 @@ function hasCharacterTagError(matchObject) {
   let needsParams = tagsAndLinting[matchObject.tagName] && tagsAndLinting[matchObject.tagName].needsParam === true;
 
   if (needsParams && !decoratedMatchObject.parameter) {
-    logBadTag(`Character tag requires params, but none found`, matchObject);
+    logBadTag(`Character tag ${matchObject.tagName} requires params, but none found`, matchObject);
     return true;
   }
 
@@ -152,7 +152,7 @@ function hasCharacterTagError(matchObject) {
 
 function checkForInValidCharacterTagForm(decoratedMatchObject) {
   if (!decoratedMatchObject.character || !decoratedMatchObject.type) {
-    logBadTag('Character tag missing or malformed', decoratedMatchObject);
+    logBadTag(`Character tag missing or malformed: ${decoratedMatchObject.fullTag}`, decoratedMatchObject);
     return true;
   } 
 
@@ -197,7 +197,7 @@ function decorateCharTags(matchObject) {
 function hasStoryTagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
-    logBadTag('Story tag missing argument', matchObject);
+    logBadTag(`Story tag '${matchObject.tagName}' missing argument`, matchObject);
     return true; 
   }
 
@@ -207,7 +207,7 @@ function hasStoryTagError(matchObject) {
 
   //story tags must have no argument after the period
   if (matchObject.periodArg) {
-    logBadTag('Story tag malformed', matchObject);
+    logBadTag(`Story tag '${matchObject.tagName}' malformed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
 
@@ -217,7 +217,7 @@ function hasStoryTagError(matchObject) {
 function hasUITagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
-    logBadTag('UI tag missing argument', matchObject);
+    logBadTag(`UI tag '${matchObject.tagName}' missing argument`, matchObject);
     return true;
   }
 
@@ -227,7 +227,7 @@ function hasUITagError(matchObject) {
 function hasInvalidParam(matchObject, param) {
   let validParams = tagsAndLinting[matchObject.tagName] && tagsAndLinting[matchObject.tagName].validParams;
   if (validParams && !validParams.includes(param.toLowerCase())) {
-    logBadTag('Parameter for that tag is not allowed', matchObject);
+    logBadTag(`Parameter for '${matchObject.tagName}' is not allowed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
   return false;
@@ -301,7 +301,7 @@ function hasLineErrors(line, lineNumber, path) {
         if (lintingErrorFunction(matchObject)) lineError = true;
 
       } else {
-        logBadTag('Unknown tag name', matchObject);
+        logBadTag(`Unknown tag: '${matchObject.tagName}'`, matchObject);
         lineError = true;
       }
     }
