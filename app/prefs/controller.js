@@ -15,8 +15,9 @@ $(document).ready(() => {
 
   /* for reference; these are declared in main.js
       settings.defaults({
-        charCountDanger: 90,
-        charCountCutoff: 120,
+        narrativeCountDanger: 140,
+        dialogCountDanger: 75,
+        charCountCutoff: 560,
         enforceCharCounts: true
     });
   */
@@ -75,4 +76,3 @@ $(document).ready(() => {
   });
 
 });
-
