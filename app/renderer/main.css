@@ -659,6 +659,14 @@ img.issue-icon.warning {
   background-color: #FFDC00;
 }
 
+#player p .characterName {
+  color: #8e5d0e;
+}
+
+#player p .characterName.Lina {
+  color: #1D0C6F;
+}
+
 #player span.carrotTags {
   float: right;
   max-width: 40%;

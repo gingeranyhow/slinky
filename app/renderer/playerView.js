@@ -107,6 +107,7 @@ function addTextSection(text)
     // Split the line if we have a >>
     var splitOnCarrotTags = text.split(">>");
     var nonTagText = splitOnCarrotTags.shift();
+
     // Reconstitute the rest of the line that has tags
     var tagText = "";
     if (splitOnCarrotTags.length > 0) {
@@ -114,34 +115,51 @@ function addTextSection(text)
     }
 
     // If all we have left is a character name, style that like a tag
+
     if (/[A-Z]+:\s*$/.test(nonTagText)) {
         tagText = nonTagText + tagText;
         nonTagText = "";
     }
 
-    var splitIntoSpans = nonTagText.split(" ");
+    var arrayOfWords = nonTagText.split(" ");
+    var dialogueRegex = /^[A-Z]+:/
+    var isDialogueLine = dialogueRegex.test(arrayOfWords[0]);
 
-    var plainSpans = new Array();
-    var highlightedSpans = new Array();
+    var plainSpans = [];
+    var highlightedSpans = [];
 
     if (settings.getSync("enforceCharCounts")) {
         // ROBIN: Enforce character counts on this <p>.
         let charCount = 0;
-        let charCutoff = settings.getSync("charCountDanger");
-        for (let span of splitIntoSpans) {
-            charCount += span.length;
-            if (charCount < charCutoff) {
-                plainSpans.push(span);
-            } else {
-                highlightedSpans.push(span);
-            }
+        const MAX_NARRATION_COUNT = settings.getSync("narrativeCountDanger");
+        const MAX_DIALOGUE_COUNT = settings.getSync("dialogCountDanger");
+        let dangerousWordCount = isDialogueLine ? MAX_DIALOGUE_COUNT : MAX_NARRATION_COUNT;
+
+        for (var i = 0; i < arrayOfWords.length; i++) {
+          var currentWord = arrayOfWords[i];
+          charCount += currentWord.length;
+          if (charCount < dangerousWordCount) {
+            plainSpans.push(currentWord);
+          } else {
+            highlightedSpans.push(currentWord);
+          }
         }
     } else {
         // ROBIN: We are not enforcing any character counts, so...
-        plainSpans = splitIntoSpans;
+        plainSpans = arrayOfWords;
     }
 
-    var textAsSpans = "<span>" + plainSpans.join("</span> <span>") + "</span>";
+    let isLina = (arrayOfWords[0] === 'LINA:');
+    let initialSpan = "<span>";
+    
+    if (isDialogueLine && isLina) {
+      initialSpan = "<span class='characterName Lina'>‍"
+    } else if (isDialogueLine) {
+      initialSpan = "<span class='characterName'>"
+    }
+
+    var textAsSpans = initialSpan + plainSpans.join("</span> <span>") + "</span>";
+
     if (highlightedSpans.length > 0) {
         // ROBIN: Note the space at the front here. Fussy.
         textAsSpans += " <span class='charCountWarning'>" + highlightedSpans.join("</span> <span class='charCountWarning'>") + "</span>";
