@@ -7,6 +7,9 @@ var defaultDir = '../Assets/Ink Files/';
 // Run just against GDC rides
 var filesToLint = defaultDir + 'GDCDemo/Rides/*.ink';
 
+
+var sendOutputToStream = false;
+var collectedOutput;
 // OR, run against all Rides
 // var filesToLint = defaultDir + '{,GDCDemo/}' + "Rides/{**,!(NotInUse)/}*.ink"
              
@@ -135,7 +138,7 @@ function hasCharacterTagError(matchObject) {
   let needsParams = tagsAndLinting[matchObject.tagName] && tagsAndLinting[matchObject.tagName].needsParam === true;
 
   if (needsParams && !decoratedMatchObject.parameter) {
-    logBadTag(`Character tag requires params, but none found`, matchObject);
+    logBadTag(`Character tag ${matchObject.tagName} requires params, but none found`, matchObject);
     return true;
   }
 
@@ -145,13 +148,13 @@ function hasCharacterTagError(matchObject) {
   return false;
 }
 
-// Linting to confirm character tags have a name and valid type
+// Linting to confirm character tags have a name and  valid type
 
 function checkForInValidCharacterTagForm(decoratedMatchObject) {
-  if (!decoratedMatchObject.character) {
-    logBadTag('Could not extract/identify character name associated with character tag', decoratedMatchObject);
+  if (!decoratedMatchObject.character || !decoratedMatchObject.type) {
+    logBadTag(`Character tag missing or malformed: ${decoratedMatchObject.fullTag}`, decoratedMatchObject);
     return true;
-  }
+  } 
 
   if(!decoratedMatchObject.type) {
     logBadTag('Character type (inline or leadingName) could not be determined', decoratedMatchObject);
@@ -211,7 +214,7 @@ function decorateCharTags(matchObject) {
 function hasStoryTagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
-    logBadTag('Story tag missing argument', matchObject);
+    logBadTag(`Story tag '${matchObject.tagName}' missing argument`, matchObject);
     return true; 
   }
 
@@ -223,7 +226,7 @@ function hasStoryTagError(matchObject) {
   //unless it's a valid decimal-containing pause story tag
   if (matchObject.periodArg && !isValidPauseTag(matchObject)) {
     
-    logBadTag('Story tag malformed', matchObject);
+    logBadTag(`Story tag '${matchObject.tagName}' malformed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
 
@@ -233,7 +236,7 @@ function hasStoryTagError(matchObject) {
 function hasUITagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
-    logBadTag('UI tag missing argument', matchObject);
+    logBadTag(`UI tag '${matchObject.tagName}' missing argument`, matchObject);
     return true;
   }
 
@@ -243,7 +246,7 @@ function hasUITagError(matchObject) {
 function hasInvalidParam(matchObject, param) {
   let validParams = tagsAndLinting[matchObject.tagName] && tagsAndLinting[matchObject.tagName].validParams;
   if (validParams && !validParams.includes(param.toLowerCase())) {
-    logBadTag('Parameter for that tag is not allowed', matchObject);
+    logBadTag(`Parameter for '${matchObject.tagName}' is not allowed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
   return false;
@@ -258,16 +261,36 @@ function isCommented(line) {
 
 function logBadTag(message, matchObject) {
   let errorDetails = `${message}\n` + colors.yellow(matchObject.line);
-  console.log(`WARNING: '${matchObject.path}' line ${matchObject.lineIndex}: ${errorDetails}`);
+  if (sendOutputToStream) {
+    collectedOutput += `WARNING: '${matchObject.path}' line ${matchObject.lineIndex}: ${message}\n`;
+  } else {
+    console.log(`WARNING: '${matchObject.path}' line ${matchObject.lineIndex}: ${errorDetails}`);
+  }
 }
 
 function lintInkFile(path) {
   let text = fs.readFile(path, 'utf8', function(err, data) {
+    lintBuffer(data);
+  });
+}
+
+function lintBuffer(path, data) {
     let lines = data.split("\n");
     for (let i = 0; i < lines.length; i++) {
       hasLineErrors(lines[i], i + 1, path);
     }
-  });
+}
+
+function lintFilesFromInky(inkFileBuffers) {
+    sendOutputToStream = true;
+    collectedOutput = "";
+
+    for (var path in inkFileBuffers) {
+        console.log(`Linting ${path}`);
+        lintBuffer(path, inkFileBuffers[path]);
+    }
+
+    return collectedOutput;
 }
 
 function hasLineErrors(line, lineNumber, path) {
@@ -297,7 +320,7 @@ function hasLineErrors(line, lineNumber, path) {
         if (lintingErrorFunction(matchObject)) lineError = true;
 
       } else {
-        logBadTag('Unknown tag name', matchObject);
+        logBadTag(`Unknown tag: '${matchObject.tagName}'`, matchObject);
         lineError = true;
       }
     }
@@ -317,3 +340,4 @@ glob(filesToLint, function( err, files ) {
 });
 
 module.exports = hasLineErrors;
+module.exports.lintFilesFromInky = lintFilesFromInky;
