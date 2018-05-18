@@ -29,6 +29,7 @@ const tagDelimiterWithPeriod = />>\s*(\w+):?[\s]{0,3}([\w{}]*)?\.?[\s]{0,3}(\w*)
 const characterNamePattern = /^([A-Z]){3,}/u
 const extractNameFromValidLine = /^[+*\s-]*[({]?[\w\s]*[()]*[)}]?[*\s-]*([A-Z]{3,}):/u
 const checkForCommentedLine = /^\s*\/\//
+const checkForInlineLogic = /^[+*\s-]*\{[A-Z()]{3,}:(.*?)\}/iu
 
 // Ignores spaces, dashes, stars and ink tags preceding name.
 
@@ -298,6 +299,12 @@ function hasLineErrors(line, lineNumber, path) {
 
   if (isCommented(line)) {
     return false;
+  }
+
+  // Strip out inline logic, e.g.  {Cute:LINA: Oh yeah, I was destined for greatness 'til the RSI. >>react:wink} --> LINA: Oh yeah, I was destined for greatness 'til the RSI. >>react:wink
+  let lineWithInlineLogic = checkForInlineLogic.exec(line);
+  if (lineWithInlineLogic) {
+      line = lineWithInlineLogic[1];
   }
 
   do {
