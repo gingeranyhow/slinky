@@ -97,6 +97,18 @@ test('handle Ink tags prior to the name on line-first', t => {
   }
 })
 
+
+test.skip('Ignore ink tags prior to the name when ink tags have colons', t => {
+  let tags = [
+    '  {isRed(): RISA: Well the important thing is to ensure the safety of all, right? >>react:awkward }',
+    'Cute:RISA: okay >>emote:sad'
+    ]
+
+  for (let tag of tags) {
+    t.false(hasLineErrors(tag, 0, 'test.js'))
+  }
+})
+
 test('Test valid story tags with parameters', t => {
     let tags = [
       '>>cutCamera:paxLeft',
@@ -104,6 +116,16 @@ test('Test valid story tags with parameters', t => {
 
     for (let tag of tags) {
       // t.true(findLineErrors(tag, 1, 'hi'));
+      t.false(hasLineErrors(tag, 0, 'test.js'))
+    }
+});
+
+test('Do not throw errors for pause story tags with decimal', t => {
+    let tags = [
+      '>>pause:1.5',
+      '>>pause:0.7']
+
+    for (let tag of tags) {
       t.false(hasLineErrors(tag, 0, 'test.js'))
     }
 });
