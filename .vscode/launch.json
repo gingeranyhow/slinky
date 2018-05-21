@@ -34,6 +34,19 @@
             "port": 5858,
             "sourceMaps": false,
             "outDir": null
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run AVA test serially",
+            "program": "${workspaceRoot}/app/node_modules/ava/profile.js",
+            "args": [
+                "--serial",
+                "${file}"
+            ],
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
         }
     ],
     "compounds": [

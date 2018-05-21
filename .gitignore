@@ -9,3 +9,4 @@ ReleaseUpload
 app/renderer/documentation/
 .DS_Store
 npm-debug.log
+.vscode/launch.json

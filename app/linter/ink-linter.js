@@ -61,6 +61,14 @@ let storyTags = {
   }
 }
 
+// List of simple tags that are valid but don't have any params
+let simpleTags = {
+  tags: ['saveGame'],
+  linter: (matchObject) => {return false; },  // pass through since there's no other processing
+  needsParam: false,
+  validParams: {}
+}
+
 let tagsWithoutEvents = {
   linter: hasUITagError, 
   needsParam: true,
@@ -96,7 +104,7 @@ let tagsWithoutEvents = {
      "disabled",
      "UIView",
      /* "pause",*/ // This is in the story tag list. Confirm with patrick.
-     "distance"
+     "distance",
   ],
   validParams: {}
 };
@@ -117,7 +125,7 @@ let uiTags = {
 
 let tagsAndLinting = {};
 
-for (tagType of [charTagsParam, uiTags, tagsWithoutEvents, charTagsNoParam, storyTags]) {
+for (tagType of [charTagsParam, uiTags, tagsWithoutEvents, charTagsNoParam, storyTags, simpleTags]) {
   for (tag of tagType.tags) {
     tagsAndLinting[tag.toLowerCase()] = {
       linter: tagType.linter,

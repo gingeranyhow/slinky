@@ -148,3 +148,18 @@ test('Test story tags missing required parameters', t => {
 test('valid UI tags should be accepted', t => {
   t.false(hasLineErrors('>>UIView:MapView.RideDetails'));
 })
+
+test('Simple tags are recognized', t => {
+    t.false(hasLineErrors('>>saveGame', 0, 'test.js'));
+})
+
+test("Inline logic doesn't trip up character tags", t => {
+    let lines = [
+        "{isRed(): RISA: Well, of course we'll see, but the important thing is to ensure the safety of all, right? >>react:awkward }",
+        "* LINA: {isNegative(): You're seriously asking me if I'm|...Am I} okay with my job being eliminated?",
+        "   {Cute:LINA: Oh yeah, I was destined for greatness 'til the RSI. >>react:wink}"];
+    
+        for (let line of lines) {
+            t.false(hasLineErrors(line, 0, 'test.js'));
+        }
+})
