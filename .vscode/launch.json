@@ -3,21 +3,24 @@
     "configurations": [
         {
             "name": "Inky",
-            "type": "node",
+            "type": "legacy",
             "request": "launch",
             "program": "${workspaceRoot}/app/main-process/main.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/app/node_modules/.bin/electron",
-            "runtimeArgs": [/*
-                ".",
-                "--enable-logging"
-            */],
-            "env": {},
-            "externalConsole": true,
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/app/node_modules/.bin/electron.cmd"
+            },
+            "runtimeArgs": [
+                "app/",
+           //     "--enable-logging"
+            ],
+            "env": {"ELECTRON_ENABLE_LOGGING": "1"},
+            //"externalConsole": true,
             "sourceMaps": false,
-            "outDir": null
+            //"outDir": null
         },
 	  {
               "name": "Electron: Renderer",

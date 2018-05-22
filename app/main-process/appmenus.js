@@ -43,7 +43,7 @@ function setupMenus(callbacks) {
         {
           label: 'Launch Ink Runner',
           accelerator: 'CmdOrCtrl+B',
-          enabled: callbacks.isFocusedWindow,
+          enabled: (process.platform === "darwin" && callbacks.isFocusedWindow),
           click: callbacks.launchRunner
         },
         {
@@ -271,7 +271,7 @@ function setupMenus(callbacks) {
         },
       ]
     });
-
+   
     var windowMenu = _.find(template, menu => menu.role == "window");
     windowMenu.submenu.push(
       {
@@ -282,7 +282,25 @@ function setupMenus(callbacks) {
         role: 'front'
       }
     );
+  } else if (process.platform === "win32") {
+    // Windows specific menu
+    var fileMenu = _.find(template, menu => menu.label == "File");
+    console.log(fileMenu);
+    var closeItem = _.find(fileMenu.submenu, item => item.role == "close");
+    console.log(closeItem);
+    fileMenu.submenu.splice(fileMenu.submenu.indexOf(closeItem), 0,
+      {
+        label: 'Preferences',
+        accelerator: "CmdOrCtrl+,",
+        click: callbacks.prefs
+      },
+      { 
+        type: 'separator'
+      }
+    );
+    console.log(fileMenu);
   }
+  
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
