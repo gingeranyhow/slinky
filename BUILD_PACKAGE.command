@@ -22,10 +22,10 @@ done < $PACKAGE_FILE
 echo "Version is ${version}"
 
 # Clean
-rm -rf Inky-darwin-x64/
-rm -rf Inky-win32-x64/
-rm -rf Inky-win32-ia32/
-rm -rf Inky-linux-x64/
+rm -rf McSlinky-darwin-x64/
+rm -rf McSlinky-win32-x64/
+rm -rf McSlinky-win32-ia32/
+rm -rf McSlinky-linux-x64/
 rm -rf ReleaseUpload
 
 # Create icon from PNG
