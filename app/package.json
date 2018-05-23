@@ -1,7 +1,7 @@
 {
   "name": "mcslinky",
   "productName": "McSlinky",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "An editor for ink",
   "main": "main-process/main.js",
   "scripts": {
@@ -25,12 +25,12 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "colors": "^1.2.1",
     "electron": "^1.4.3",
     "markdown-html": "^0.0.8",
     "spectron": "^3.2.6"
   },
   "dependencies": {
+    "colors": "^1.2.1",
     "chokidar": "^1.6.0",
     "fuzzaldrin-plus": "^0.5",
     "inkjs": "^1.6.0",
