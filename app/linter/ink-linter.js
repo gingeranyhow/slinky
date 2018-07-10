@@ -121,11 +121,20 @@ let uiTags = {
   validParams: {}
 };
 
+let testerTags = {
+    linter: hasTesterTagError,
+    needsParam: true,
+    tags:   ['tester'],
+    validParams: {
+        tester: ['always', 'never', 'avoid', 'prefer']
+    }
+};
+
 // build a single object with all tags and their parameter values
 
 let tagsAndLinting = {};
 
-for (tagType of [charTagsParam, uiTags, tagsWithoutEvents, charTagsNoParam, storyTags, simpleTags]) {
+for (tagType of [charTagsParam, uiTags, tagsWithoutEvents, charTagsNoParam, storyTags, simpleTags, testerTags]) {
   for (tag of tagType.tags) {
     tagsAndLinting[tag.toLowerCase()] = {
       linter: tagType.linter,
@@ -250,6 +259,17 @@ function hasUITagError(matchObject) {
   }
 
   return false;
+}
+
+function hasTesterTagError(matchObject) {
+  // tester tags must have an argument
+  if (!matchObject.semiColonArg) {
+    logBadTag(`Story tag '${matchObject.tagName}' missing argument`, matchObject);
+    return true; 
+  }
+
+  if (hasInvalidParam(matchObject, matchObject.semiColonArg)) return true;
+  return false; 
 }
 
 function hasInvalidParam(matchObject, param) {
