@@ -91,11 +91,12 @@ function reloadInklecateSession() {
     ipc.send("compile", instr);
 }
 
-function exportJson(callback) {
+function exportJson(inkJsCompatible, callback) {
     exportCompleteCallback = callback;
 
     var instr = buildCompileInstruction();
     instr.export = true;
+    instr.inkJsCompatible = inkJsCompatible;
     currentExportSessionId = instr.sessionId;
 
     ipc.send("compile", instr);
@@ -134,6 +135,11 @@ function stepBack() {
 
 function getLocationInSource(offset, callback) {
     ipc.send("get-location-in-source", offset, currentPlaySessionId);
+    locationInSourceCallbackObj = { callback: callback, sessionId: currentPlaySessionId };
+}
+
+function getRuntimePathInSource(runtimePath, callback) {
+    ipc.send("get-runtime-path-in-source", runtimePath, currentPlaySessionId);
     locationInSourceCallbackObj = { callback: callback, sessionId: currentPlaySessionId };
 }
 
@@ -327,5 +333,6 @@ exports.LiveCompiler = {
     rewind: rewind,
     stepBack: stepBack,
     getLocationInSource: getLocationInSource,
+    getRuntimePathInSource: getRuntimePathInSource,
     evaluateExpression: evaluateExpression
 }

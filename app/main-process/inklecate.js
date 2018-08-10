@@ -13,7 +13,7 @@ const linter = require('../linter/ink-linter.js');
 const inklecateNames = {
     "darwin": "/ink/inklecate_mac",
     "win32":  "/ink/inklecate_win.exe",
-    "linux": "/ink/inklecate_win.exe"
+    "linux": "/ink/inklecate_linux"
 }
 const inklecateRootPathRelease = path.join(__dirname, "../../app.asar.unpacked/main-process");
 const inklecateRootPathDev = __dirname;
@@ -76,8 +76,15 @@ function compile(compileInstruction, requester) {
 
     inklecateOptions.push(mainInkPath);
 
-    const playProcess = spawn(inklecatePath, inklecateOptions, {
-        "cwd": path.dirname(inklecatePath),
+    var inklecatePathToUse = inklecatePath;
+    if( compileInstruction.inkJsCompatible ) {
+        var inklecateName = path.basename(inklecatePath);
+        var inklecateFolderName = path.dirname(inklecatePath);
+        inklecatePathToUse = path.resolve(inklecateFolderName, "inkjs-compatible", inklecateName);
+    }
+
+    const playProcess = spawn(inklecatePathToUse, inklecateOptions, {
+        "cwd": path.dirname(inklecatePathToUse),
         "env": {
             "MONO_BUNDLED_OPTIONS": "--debug"
         }
@@ -150,8 +157,8 @@ function compile(compileInstruction, requester) {
         for(var i=0; i<lines.length; ++i) {
             var line = lines[i].trim();
 
-            var choiceMatches = line.match(/^(\d+):\s+(.*)/);
-            var errorMatches = line.match(/^(ERROR|WARNING|RUNTIME ERROR|TODO): ('([^']+)' )?line (\d+): (.+)/);
+            var choiceMatches = line.match(/^(\d+):\s*(.*)/);
+            var errorMatches = line.match(/^(ERROR|WARNING|RUNTIME ERROR|RUNTIME WARNING|TODO): ('([^']+)' )?line (\d+): (.+)/);
             var tagMatches = line.match(/^(# tags:) (.+)/);
             var promptMatches = line.match(/^\?>/);
             var debugSourceMatches = line.match(/^DebugSource: (line (\d+) of (.*)|Unknown source)/);
@@ -181,6 +188,7 @@ function compile(compileInstruction, requester) {
                     text: choiceMatches[2]
                 }, sessionId);
             } else if( promptMatches ) {
+                sendAnyErrors();
                 if( session.evaluatingExpression )
                     session.evaluatingExpression = false;
                 else if( session.justRequestedDebugSource )
@@ -289,6 +297,14 @@ ipc.on("get-location-in-source", (event, offset, sessionId) => {
         const playProcess = sessions[sessionId].process;
         if( playProcess )
             playProcess.stdin.write("DebugSource("+offset+")\n");
+    }
+});
+
+ipc.on("get-runtime-path-in-source", (event, runtimePath, sessionId) => {
+    if( sessions[sessionId] ) {
+        const playProcess = sessions[sessionId].process;
+        if( playProcess )
+            playProcess.stdin.write("DebugPath "+runtimePath+"\n");
     }
 });
 

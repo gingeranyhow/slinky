@@ -10,17 +10,13 @@
             "args": [],
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/app/node_modules/.bin/electron",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/app/node_modules/.bin/electron.cmd"
-            },
-            "runtimeArgs": [
-                "app/",
-           //     "--enable-logging"
-            ],
-            "env": {"ELECTRON_ENABLE_LOGGING": "1"},
-            //"externalConsole": true,
+            "runtimeArgs": [/*
+                ".",
+                "--enable-logging"
+            */],
+            "env": {},
+            "console": "integratedTerminal",
             "sourceMaps": false,
-            //"outDir": null
         },
 	  {
               "name": "Electron: Renderer",

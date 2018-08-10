@@ -68,6 +68,19 @@ InkProject.prototype.createInkFile = function(anyPath) {
 
 InkProject.prototype.addNewInclude = function(newIncludePath, addToMainInk) {
 
+    // Convert new include path to relative if it's not already
+    if( path.isAbsolute(newIncludePath) ) {
+        assert(this.mainInkFile.projectDir, "Main ink needs to be saved before we start loading includes with absolute paths.");
+        newIncludePath = path.relative(this.mainInk.projectDir, newIncludePath);
+    }
+
+    // Make sure it doesn't already exist
+    var alreadyExists = _.some(this.files, (f) => f.relativePath() == newIncludePath);
+    if( alreadyExists ) {
+        alert("Could not create new include file at "+newIncludePath+" because it already exists!");
+        return null;
+    }
+
     var newIncludeFile = this.createInkFile(newIncludePath || null);
 
     if( addToMainInk )
@@ -92,10 +105,12 @@ InkProject.prototype.refreshIncludes = function() {
             return;
 
         inkFile.includes.forEach(incPath => {
+            let alreadyDone = relPathsFromINCLUDEs.contains(incPath);
+
             relPathsFromINCLUDEs.push(incPath);
 
             var recurseInkFile = this.inkFileWithRelativePath(incPath);
-            if( recurseInkFile )
+            if( recurseInkFile && !alreadyDone )
                 addIncludePathsFromFile(recurseInkFile);
         });
     }
@@ -167,7 +182,7 @@ InkProject.prototype.startFileWatching = function() {
         var inkFile = _.find(this.files, f => f.relativePath() == relPath);
         if( inkFile ) {
             // TODO: maybe ask user if they want to overwrite? not sure I want to though
-            if( !inkFile.hasUnsavedChanges )
+            if( !inkFile.hasUnsavedChanges ) {
 
                 if( this.activeInkFile == inkFile )
                     EditorView.saveCursorPos();
@@ -176,6 +191,7 @@ InkProject.prototype.startFileWatching = function() {
                     if( success && this.activeInkFile == inkFile )
                         setImmediate(() => EditorView.restoreCursorPos());
                 });
+            }
         }
     });
     this.fileWatcher.on("unlink", removedAbsFilePath => {
@@ -260,7 +276,8 @@ function copyFile(source, destination, transform) {
 InkProject.prototype.export = function(exportType, callback) {
 
     // Always start by building the JSON
-    LiveCompiler.exportJson((err, compiledJsonTempPath) => {
+    var inkJsCompatible = exportType == "js" || exportType == "web";
+    LiveCompiler.exportJson(inkJsCompatible, (err, compiledJsonTempPath) => {
         if( err ) {
             alert("Could not export: "+err);
             return;
@@ -644,6 +661,39 @@ InkProject.prototype.findSymbol = function(name, posContext) {
     return symbol;
 }
 
+InkProject.prototype.countWords = function() {
+    const TokenIterator = ace.require("ace/token_iterator").TokenIterator;
+
+    // We need to be sure to count each file only one time
+    // And this prevents issues with circular includes
+    let filesDone = [];
+
+    const countWordsInFile = (file) => {
+        let iterator = new TokenIterator(file.getAceSession(), 0, 0);
+        let n = 0;
+
+        for (let token = iterator.getCurrentToken(); token != null; token = iterator.stepForward())
+            if (["text", "choice"].contains(token.type))
+                n += (token.value.match(/\w+/g) || []).length;
+
+        return n;
+    };
+
+    const recur = (file) => {
+        // Safety measure
+        if (file == null) return 0;
+
+        filesDone.push(file.relPath);
+        return file.includes.reduce((n, fileName) => {
+            // Do not count a file for a second time
+            return (!filesDone.contains(fileName)) ? n + recur(this.files.find((file) => file.relPath === fileName)) : n;
+        }, countWordsInFile(file));
+    };
+
+    let n = recur(this.activeInkFile);
+    alert(`There is ${n.toLocaleString()} word${n > 1 ? 's' : ''} in this project.`);
+}
+
 InkProject.setEvents = function(e) {
     InkProject.events = e;
 }
@@ -708,5 +758,10 @@ ipc.on("project-tryClose", (event) => {
     }
 });
 
+ipc.on("project-count-words", (event) => {
+    if( InkProject.currentProject ) {
+        InkProject.currentProject.countWords();
+    }
+});
 
 exports.InkProject = InkProject;

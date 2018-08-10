@@ -151,6 +151,11 @@ function setupMenus(callbacks) {
           type: "checkbox",
           checked: true,
           click: callbacks.toggleTags
+        },
+        {
+            label: 'Count words',
+            enabled: callbacks.isFocusedWindow,
+            click: callbacks.countWords
         }
       ]
     },
@@ -217,14 +222,15 @@ function setupMenus(callbacks) {
     },
   ];
 
+  const name = app.getName();
+  const aboutWindowLabel = 'About ' + name;
   // Mac specific menus
   if (process.platform === 'darwin') {
-    const name = app.getName();
     template.unshift({
       label: name,
       submenu: [
         {
-          label: 'About ' + name,
+          label: aboutWindowLabel,
           click: callbacks.showAbout
           // role: 'about'
         },
@@ -300,7 +306,16 @@ function setupMenus(callbacks) {
     );
     console.log(fileMenu);
   }
-  
+  else
+  {
+    // Windows specific menu items
+    template.find(x => x.label === "Help").submenu.push(
+      {
+        label: aboutWindowLabel,
+        click: callbacks.showAbout
+      }
+    );
+  }
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);

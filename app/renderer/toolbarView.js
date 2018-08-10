@@ -1,3 +1,5 @@
+const electron = require("electron");
+const remote = electron.remote;
 const $ = window.jQuery = require('./jquery-2.2.3.min.js');
 
 // Overriden by external setButtonActions call
@@ -23,7 +25,8 @@ function updateIssueSummary(issues, issueClickCallback) {
         "ERROR": 1,
         "RUNTIME ERROR": 2,
         "WARNING": 3,
-        "TODO": 4
+        "RUNTIME WARNING": 4,
+        "TODO": 5
     };
 
     // Note: we're sorting the original array that 
@@ -150,6 +153,9 @@ $(document).ready(function() {
 
 function setTitle(title) {
     $("h1.title").text(title);
+
+    // Not visible on macOS
+    remote.getCurrentWindow().setTitle(title);
 }
 
 exports.ToolbarView = {
