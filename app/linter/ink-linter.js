@@ -105,7 +105,6 @@ let tagsWithoutEvents = {
      "disabled",
      "tester",
      "fuelPreview",
-     "UIView",
      "distance"
   ],
   validParams: {}
@@ -115,12 +114,21 @@ let uiTags = {
   linter: hasUITagError,
   needsParam: true, 
   tags: 
-    ["UILabel",
+    ["UIView",
+     "UILabel",
      "UIButton",
      "UIImage",
      "UIFloat",
      "UIMovie"],
   validParams: {}
+};
+
+let uiTagsNoParams = {
+    linter: hasUITagError,
+    needsParam: false,
+    tags:
+      ["UIModal"],
+    validParams: {}
 };
 
 let testerTags = {
@@ -136,15 +144,17 @@ let testerTags = {
 
 let tagsAndLinting = {};
 
-for (tagType of [charTagsParam, uiTags, tagsWithoutEvents, charTagsNoParam, storyTags, simpleTags, testerTags]) {
+for (tagType of [charTagsParam, uiTags, uiTagsNoParams,tagsWithoutEvents, charTagsNoParam, storyTags, simpleTags, testerTags]) {
   for (tag of tagType.tags) {
-    tagsAndLinting[tag.toLowerCase()] = {
+    tagsAndLinting[tag] = {
       linter: tagType.linter,
       needsParam: tagType.needsParam,
       validParams: tagType.validParams[tag] || null
     }
   }
 }
+
+var errorType = "foo"; // Used for unit test to make sure the correct log is shown
 
 /* LINTING FUNCTIONS FOR VARIOUS TAG CATEGORIES */
 
@@ -234,7 +244,7 @@ function decorateCharTags(matchObject) {
 function hasStoryTagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
-    logBadTag(`Story tag '${matchObject.tagName}' missing argument`, matchObject);
+    logBadTag(`Story tag '${matchObject.fullTag}' missing argument`, matchObject);
     return true; 
   }
 
@@ -246,7 +256,7 @@ function hasStoryTagError(matchObject) {
   //unless it's a valid decimal-containing pause story tag
   if (matchObject.periodArg && !isValidPauseTag(matchObject)) {
     
-    logBadTag(`Story tag '${matchObject.tagName}' malformed: ${matchObject.fullTag}`, matchObject);
+    logBadTag(`Story tag '${matchObject.fullTag}' malformed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
 
@@ -254,9 +264,11 @@ function hasStoryTagError(matchObject) {
 }
 
 function hasUITagError(matchObject) {
-  // story tags must have an argument after the semiColon
-  if (!matchObject.semiColonArg) {
-    logBadTag(`UI tag '${matchObject.tagName}' missing argument`, matchObject);
+  if (matchObject.periodArg && !matchObject.semiColonArg) {
+    logBadTag(`Malformed '${matchObject.tagName}': Flipped '.' and ':'`, matchObject);
+    return true;
+  } else if (matchObject.needsParam && !matchObject.semiColonArg) {
+    logBadTag(`UI tag '${matchObject.fullTag}' missing argument`, matchObject);
     return true;
   }
 
@@ -266,7 +278,7 @@ function hasUITagError(matchObject) {
 function hasTesterTagError(matchObject) {
   // tester tags must have an argument
   if (!matchObject.semiColonArg) {
-    logBadTag(`Story tag '${matchObject.tagName}' missing argument`, matchObject);
+    logBadTag(`Story tag '${matchObject.fullTag}' missing argument`, matchObject);
     return true; 
   }
 
@@ -343,7 +355,7 @@ function hasLineErrors(line, lineNumber, path) {
     if (match) {
       let matchObject = {
         fullTag: match[0],
-        tagName: match[1].toLowerCase(),
+        tagName: match[1],
         semiColonArg: match[2],
         periodArg: match[3],
         lineIndex: lineNumber,
@@ -357,7 +369,10 @@ function hasLineErrors(line, lineNumber, path) {
         if (lintingErrorFunction(matchObject)) lineError = true;
 
       } else {
-        logBadTag(`Unknown tag: '${matchObject.tagName}'`, matchObject);
+        // Check for case errors
+        let closeMatch = Object.keys(tagsAndLinting).find((key) => key.toLowerCase() == matchObject.tagName.toLowerCase());  
+        let closeMatchPrompt = closeMatch ? `. Did you mean '>>${closeMatch}'?` : "";
+        logBadTag(`Unknown tag: '>>${matchObject.tagName}'${closeMatchPrompt}`, matchObject);
         lineError = true;
       }
     }
@@ -378,3 +393,4 @@ glob(filesToLint, function( err, files ) {
 
 module.exports = hasLineErrors;
 module.exports.lintFilesFromInky = lintFilesFromInky;
+module.exports.errorType = errorType;

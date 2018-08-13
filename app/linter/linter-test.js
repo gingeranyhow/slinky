@@ -146,11 +146,23 @@ test('Test story tags missing required parameters', t => {
 });
  
 test('valid UI tags should be accepted', t => {
-  t.false(hasLineErrors('>>UIView:MapView.RideDetails'));
+  t.false(hasLineErrors('>>UIView:MapView.RideDetails', 0, 'test.js'));
+})
+
+test ("Periods shoudn't come before colons", t => {
+  t.true(hasLineErrors('>>UIView.PeriodBefore:Colon', 0, 'test.js'));
+})
+
+test ("UIModal doesn't need a parameter", t => {
+  t.false(hasLineErrors('+[Modal Choice >>UIModal] -> SomeKnot', 0, 'test.js'));
 })
 
 test('Simple tags are recognized', t => {
     t.false(hasLineErrors('>>saveGame', 0, 'test.js'));
+})
+
+test ("Tags are case sensitive", t=> {
+    t.true(hasLineErrors('>>CutCamera:LinaPOV', 0, 'test.js'));
 })
 
 test("Inline logic doesn't trip up character tags", t => {
