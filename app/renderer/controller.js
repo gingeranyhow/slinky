@@ -1,6 +1,6 @@
 const electron = require("electron");
 const ipc = electron.ipcRenderer;
-const remote = electron.remote;
+
 const path = require("path");
 const $ = window.jQuery = require('./jquery-2.2.3.min.js');
 
@@ -30,10 +30,8 @@ InkProject.setEvents({
     "newProject": (project) => {
         EditorView.focus();
         LiveCompiler.setProject(project);
-
         var filename = project.activeInkFile.filename();
         ToolbarView.setTitle(filename);
-        remote.getCurrentWindow().setTitle(filename);
         NavView.setMainInkFilename(filename);
         NavHistory.reset();
         NavHistory.addStep();
@@ -47,7 +45,6 @@ InkProject.setEvents({
     "didSwitchToInkFile": (inkFile) => {
         var filename = inkFile.filename();
         ToolbarView.setTitle(filename);
-        remote.getCurrentWindow().setTitle(filename);
         NavView.highlightRelativePath(inkFile.relativePath());
         var fileIssues = LiveCompiler.getIssuesForFilename(inkFile.relativePath());
         setImmediate(() => EditorView.setErrors(fileIssues));
@@ -109,7 +106,7 @@ LiveCompiler.setEvents({
             if( error.filename == InkProject.currentProject.activeInkFile.relativePath() )
                 EditorView.addError(error);
 
-            if( error.type == "RUNTIME ERROR" )
+            if( error.type == "RUNTIME ERROR" || error.type == "RUNTIME WARNING" )
                 PlayerView.addLineError(error, () => gotoIssue(error));
         }
 
@@ -227,8 +224,12 @@ NavView.setEvents({
     },
     addInclude: (filename, addToMainInk) => {
         var newInkFile = InkProject.currentProject.addNewInclude(filename, addToMainInk);
-        InkProject.currentProject.showInkFile(newInkFile);
-        NavHistory.addStep();
+        if( newInkFile ) {
+            InkProject.currentProject.showInkFile(newInkFile);
+            NavHistory.addStep();
+            return true;
+        }
+        return false;
     }
 });
 
@@ -238,6 +239,9 @@ GotoAnything.setEvents({
         if( typeof row !== 'undefined' )
             EditorView.gotoLine(row+1);
         NavHistory.addStep();
+    },
+    lookupRuntimePath: (path, resultHandler) => {
+        LiveCompiler.getRuntimePathInSource(path, resultHandler);
     }
 });
 

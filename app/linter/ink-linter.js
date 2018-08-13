@@ -53,11 +53,12 @@ let charTagsNoParam = {
 }
 
 let storyTags = {
-  tags: ['car', 'pause', 'setRide', 'cutCamera', 'lighting', 'sfx'],
+  tags: ['car', 'pause', 'setRide', 'cutCamera', 'lighting', 'sfx', 'rideEnded', 'linaHands'],
   linter: hasStoryTagError,
   needsParam: true,
   validParams: {
-    cutCamera: ['linapov', 'paxleft', 'paxright', 'dashcam', 'hoodcam', 'linafront', 'city']
+    cutCamera: ['linapov', 'paxleft', 'paxright', 'dashcam', 'hoodcam', 'linafront', 'city'],
+    linaHands: ['checkwatch']
   }
 }
 
@@ -102,9 +103,10 @@ let tagsWithoutEvents = {
      "DropoffLocation",
      "DropoffNeighborhood",
      "disabled",
+     "tester",
+     "fuelPreview",
      "UIView",
-     /* "pause",*/ // This is in the story tag list. Confirm with patrick.
-     "distance",
+     "distance"
   ],
   validParams: {}
 };

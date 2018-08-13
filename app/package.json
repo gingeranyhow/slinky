@@ -25,8 +25,11 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "electron": "^1.4.3",
     "markdown-html": "^0.0.8",
+    "mocha": "^4.0.1",
     "spectron": "^3.2.6"
   },
   "dependencies": {
