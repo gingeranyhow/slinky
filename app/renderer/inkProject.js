@@ -165,6 +165,8 @@ InkProject.prototype.startFileWatching = function() {
 
     this.fileWatcher.on("add", newlyFoundAbsFilePath => {
         var relPath = path.relative(this.mainInk.projectDir, newlyFoundAbsFilePath);
+
+        
         var existingFile = _.find(this.files, f => f.relativePath() == relPath);
         if( !existingFile ) {
             console.log("Watch found new file - creating it: "+relPath);
@@ -178,9 +180,12 @@ InkProject.prototype.startFileWatching = function() {
     });
 
     this.fileWatcher.on("change", updatedAbsFilePath => {
+        // Convert windows relpaths into *nix style
         var relPath = path.relative(this.mainInk.projectDir, updatedAbsFilePath);
+        console.error("File %o has changed! (%s)", updatedAbsFilePath, relPath);
         var inkFile = _.find(this.files, f => f.relativePath() == relPath);
         if( inkFile ) {
+            console.error("Inkfile %o has changed!", inkfile);
             // TODO: maybe ask user if they want to overwrite? not sure I want to though
             if( !inkFile.hasUnsavedChanges ) {
 

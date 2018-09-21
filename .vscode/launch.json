@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Inky",
-            "type": "legacy",
+            "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/app/main-process/main.js",
             "stopOnEntry": false,
