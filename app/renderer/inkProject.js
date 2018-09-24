@@ -201,10 +201,11 @@ InkProject.prototype.startFileWatching = function() {
                 this.showInkFile(inkFile);
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["&Ignore changes", "&Discard edits"],
+                    buttons: ["Ignore", "Discard edits"],
                     defaultId: 1,
-                    title: `${relPath} has changed on disk.`,
-                    message: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
+                    title: "File changed on disk",
+                    message: `${relPath} has changed on disk.`,
+                    detail: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
                 });
 
                 if (response == 1) {
@@ -230,10 +231,11 @@ InkProject.prototype.startFileWatching = function() {
             } else if (inkfile != this.mainInk) {
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["&Ignore", "&Discard"],
+                    buttons: ["Ignore", "Discard edits"],
                     defaultId: 1,
                     title: "File deleted on disk",
-                    message: `${inkFile} has been deleted on disk while you have unsaved edits. Would you like to discard your changes or ignore the incoming changes?`,
+                    message: `${inkFile} has been deleted on disk.`,
+                    detail: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
                 });
 
                 if (response == 1) {
