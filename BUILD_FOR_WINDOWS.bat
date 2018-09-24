@@ -1,4 +1,4 @@
-# Ensure it's correctly/fully installed first
+rem Ensure it's correctly/fully installed first
 cd app
 npm install
 cd ..
