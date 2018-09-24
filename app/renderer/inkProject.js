@@ -201,14 +201,14 @@ InkProject.prototype.startFileWatching = function() {
                 this.showInkFile(inkFile);
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["Ignore", "Discard edits"],
-                    defaultId: 1,
+                    buttons: ["Discard edits", "Ignore"],
+                    defaultId: 0,
                     title: "File changed on disk",
                     message: `${relPath} has changed on disk.`,
                     detail: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
                 });
 
-                if (response == 1) {
+                if (response == 0) {
                     // Reload the file
                     if( this.activeInkFile == inkFile )
                         EditorView.saveCursorPos();
@@ -231,27 +231,27 @@ InkProject.prototype.startFileWatching = function() {
             } else if (inkfile != this.mainInk) {
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["Ignore", "Discard edits"],
-                    defaultId: 1,
+                    buttons: ["Discard edits", "Ignore"],
+                    defaultId: 0,
                     title: "File deleted on disk",
                     message: `${inkFile} has been deleted on disk.`,
                     detail: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
                 });
 
-                if (response == 1) {
+                if (response == 0) {
                     this.deleteInkFile(inkFile);
                 }
             } else {
                 // reload the project
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["&No", "&Yes"],
-                    defaultId: 1,
+                    buttons: ["Yes", "No"],
+                    defaultId: 0,
                     title: "Main ink file deleted on disk",
                     message: `${inkFile} has been deleted on disk. Would you like to close the project?`,
                 });
 
-                if (response == 1) {
+                if (response == 0) {
                     this.closeImmediate();
                 }
 
