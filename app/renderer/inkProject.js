@@ -6,6 +6,7 @@ const fs = require("fs");
 const _ = require("lodash");
 const chokidar = require('chokidar');
 const mkdirp = require('mkdirp');
+const slash = require("slash");
 
 const EditorView = require("./editorView.js").EditorView;
 const NavView = require("./navView.js").NavView;
@@ -154,8 +155,9 @@ InkProject.prototype.refreshUnsavedChanges = function() {
 }
 
 InkProject.prototype.startFileWatching = function() {
-    if( !this.mainInk.projectDir )
+    if( !this.mainInk.projectDir ) {
         return;
+    }
 
     if( this.fileWatcher )
         this.fileWatcher.close();
@@ -165,8 +167,6 @@ InkProject.prototype.startFileWatching = function() {
 
     this.fileWatcher.on("add", newlyFoundAbsFilePath => {
         var relPath = path.relative(this.mainInk.projectDir, newlyFoundAbsFilePath);
-
-        
         var existingFile = _.find(this.files, f => f.relativePath() == relPath);
         if( !existingFile ) {
             console.log("Watch found new file - creating it: "+relPath);
@@ -180,12 +180,13 @@ InkProject.prototype.startFileWatching = function() {
     });
 
     this.fileWatcher.on("change", updatedAbsFilePath => {
-        // Convert windows relpaths into *nix style
         var relPath = path.relative(this.mainInk.projectDir, updatedAbsFilePath);
-        console.error("File %o has changed! (%s)", updatedAbsFilePath, relPath);
+        // Convert windows relpaths into posix style
+        relPath = slash(relPath);
+        console.log("File %o has changed! (%s)", updatedAbsFilePath, relPath);
         var inkFile = _.find(this.files, f => f.relativePath() == relPath);
         if( inkFile ) {
-            console.error("Inkfile %o has changed!", inkfile);
+            console.log("Inkfile %o has changed!", inkFile);
             // TODO: maybe ask user if they want to overwrite? not sure I want to though
             if( !inkFile.hasUnsavedChanges ) {
 
@@ -196,17 +197,64 @@ InkProject.prototype.startFileWatching = function() {
                     if( success && this.activeInkFile == inkFile )
                         setImmediate(() => EditorView.restoreCursorPos());
                 });
+            }  else {
+                this.showInkFile(inkFile);
+                var response = dialog.showMessageBox(remote.getCurrentWindow(), {
+                    type: "warning",
+                    buttons: ["&Ignore changes", "&Discard edits"],
+                    defaultId: 1,
+                    title: `${relPath} has changed on disk.`,
+                    message: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
+                });
+
+                if (response == 1) {
+                    // Reload the file
+                    if( this.activeInkFile == inkFile )
+                        EditorView.saveCursorPos();
+                    inkFile.tryLoadFromDisk(success => {
+                        if( success && this.activeInkFile == inkFile )
+                            setImmediate(() => EditorView.restoreCursorPos());
+                    });
+                }
             }
         }
     });
     this.fileWatcher.on("unlink", removedAbsFilePath => {
         var relPath = path.relative(this.mainInk.projectDir, removedAbsFilePath);
+        // Convert windows relpaths into posix style
+        relPath = slash(relPath);
         var inkFile = _.find(this.files, f => f.relativePath() == relPath);
         if( inkFile ) {
             if( !inkFile.hasUnsavedChanges && inkFile != this.mainInk ) {
                 this.deleteInkFile(inkFile);
+            } else if (inkfile != this.mainInk) {
+                var response = dialog.showMessageBox(remote.getCurrentWindow(), {
+                    type: "warning",
+                    buttons: ["&Ignore", "&Discard"],
+                    defaultId: 1,
+                    title: "File deleted on disk",
+                    message: `${inkFile} has been deleted on disk while you have unsaved edits. Would you like to discard your changes or ignore the incoming changes?`,
+                });
+
+                if (response == 1) {
+                    this.deleteInkFile(inkFile);
+                }
+            } else {
+                // reload the project
+                var response = dialog.showMessageBox(remote.getCurrentWindow(), {
+                    type: "warning",
+                    buttons: ["&No", "&Yes"],
+                    defaultId: 1,
+                    title: "Main ink file deleted on disk",
+                    message: `${inkFile} has been deleted on disk. Would you like to close the project?`,
+                });
+
+                if (response == 1) {
+                    this.closeImmediate();
+                }
+
             }
-        }
+        } 
     });
 }
 
