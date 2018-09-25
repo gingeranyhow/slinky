@@ -197,7 +197,7 @@ InkProject.prototype.startFileWatching = function() {
                     if( success && this.activeInkFile == inkFile )
                         setImmediate(() => EditorView.restoreCursorPos());
                 });
-            }  else {
+            }  else if (!inkFile.justSaved) {
                 this.showInkFile(inkFile);
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
@@ -213,9 +213,15 @@ InkProject.prototype.startFileWatching = function() {
                     if( this.activeInkFile == inkFile )
                         EditorView.saveCursorPos();
                     inkFile.tryLoadFromDisk(success => {
+                        if (success && this.unsavedFiles.contains(inkFile)) {
+                            this.unsavedFiles.remove(inkFile);
+                            this.refreshUnsavedChanges();
+                        }
                         if( success && this.activeInkFile == inkFile )
                             setImmediate(() => EditorView.restoreCursorPos());
                     });
+                } else {
+                    console.log("Saved %s from editor", relPath);
                 }
             }
         }
@@ -231,11 +237,11 @@ InkProject.prototype.startFileWatching = function() {
             } else if (inkfile != this.mainInk) {
                 var response = dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: "warning",
-                    buttons: ["Discard edits", "Ignore"],
+                    buttons: ["Delete", "Ignore"],
                     defaultId: 0,
                     title: "File deleted on disk",
                     message: `${inkFile} has been deleted on disk.`,
-                    detail: `You have unsaved edits. Would you like to discard your edits or ignore the incoming changes?`,
+                    detail: `You have unsaved edits. Would you like to delete the file or ignore?`,
                 });
 
                 if (response == 0) {
