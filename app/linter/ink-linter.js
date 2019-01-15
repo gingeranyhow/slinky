@@ -62,7 +62,6 @@ let charTagsParam = {
       'off',
     ],
     anim: [
-      'Cop.Off',
       'off',
       'on',
       'ticket',
@@ -76,10 +75,10 @@ let charTagsParam = {
       'look_right',
       'look_ahead',
       'look_left',
-      // 'lookleft', // DO NOT ADD BACK. These are invalid.
-      // 'lookright', // DO NOT ADD BACK. These are invalid.
-      // 'lookDown', // DO NOT ADD BACK. These are invalid.
-      // 'lookdown', // DO NOT ADD BACK. These are invalid.
+      // 'lookleft', // Not valid, use underscore versions above.
+      // 'lookright', // Not valid, use underscore versions above.
+      // 'lookDown', // Not valid, use underscore versions above.
+      // 'lookdown', // Not valid, use underscore versions above.
       'laugh',
       // 'notice', // No longer valid, use look_up, look_down, etc.
       // 'notice_destination', // No longer valid, use look_up, look_down, etc.
@@ -159,9 +158,9 @@ let simpleTags = {
 }
 
 let tagsWithoutEvents = {
-  linter: hasUITagError, 
+  linter: hasUITagError,
   needsParam: true,
-  tags: 
+  tags:
     ["id",
      "stars",
      "Title",
@@ -201,8 +200,8 @@ let tagsWithoutEvents = {
 
 let uiTags = {
   linter: hasUITagError,
-  needsParam: true, 
-  tags: 
+  needsParam: true,
+  tags:
     ["UIView",
      "UILabel",
      "UIButton",
@@ -249,7 +248,7 @@ var errorType = "foo"; // Used for unit test to make sure the correct log is sho
 
 function hasCharacterTagError(matchObject) {
   let decoratedMatchObject = decorateCharTags(matchObject);
-  
+
   // run basic character tag linting
   if (checkForInValidCharacterTagForm(decoratedMatchObject)) return true;
 
@@ -273,7 +272,7 @@ function checkForInValidCharacterTagForm(decoratedMatchObject) {
   if (!decoratedMatchObject.character || !decoratedMatchObject.type) {
     logBadTag(`Character tag missing or malformed: ${decoratedMatchObject.fullTag}`, decoratedMatchObject);
     return true;
-  } 
+  }
 
   if(!decoratedMatchObject.type) {
     logBadTag('Character type (inline or leadingName) could not be determined', decoratedMatchObject);
@@ -295,7 +294,7 @@ function isValidPauseTag(matchObject) {
 }
 
 
-// Function that identifies the character name and parameters 
+// Function that identifies the character name and parameters
 // for both of the two distint character types (inline and leading)
 function decorateCharTags(matchObject) {
   // TYPE: inline
@@ -313,7 +312,7 @@ function decorateCharTags(matchObject) {
     matchObject.character = matchObject.semiColonArg;
     matchObject.parameter = matchObject.periodArg;
     return matchObject;
-  } 
+  }
 
   let charMatch = matchObject.line.match(extractNameFromValidLine);
 
@@ -334,7 +333,7 @@ function hasStoryTagError(matchObject) {
   // story tags must have an argument after the semiColon
   if (!matchObject.semiColonArg) {
     logBadTag(`Story tag '${matchObject.fullTag}' missing argument`, matchObject);
-    return true; 
+    return true;
   }
 
   //some story tags have validation on their argument
@@ -344,12 +343,12 @@ function hasStoryTagError(matchObject) {
   //story tags must have no argument after the period
   //unless it's a valid decimal-containing pause story tag
   if (matchObject.periodArg && !isValidPauseTag(matchObject)) {
-    
+
     logBadTag(`Story tag '${matchObject.fullTag}' malformed: ${matchObject.fullTag}`, matchObject);
     return true;
   }
 
-  return false; 
+  return false;
 }
 
 function hasUITagError(matchObject) {
@@ -368,11 +367,11 @@ function hasTesterTagError(matchObject) {
   // tester tags must have an argument
   if (!matchObject.semiColonArg) {
     logBadTag(`Story tag '${matchObject.fullTag}' missing argument`, matchObject);
-    return true; 
+    return true;
   }
 
   if (hasInvalidParam(matchObject, matchObject.semiColonArg)) return true;
-  return false; 
+  return false;
 }
 
 function hasInvalidParam(matchObject, param) {
@@ -389,7 +388,7 @@ function isCommented(line) {
   return RegExp(checkForCommentedLine).test(line);
 }
 
-/* FILE THAT RUNS LINES AND FILES THROUGH LINTING*/ 
+/* FILE THAT RUNS LINES AND FILES THROUGH LINTING*/
 
 function logBadTag(message, matchObject) {
   let errorDetails = `${message}\n` + colors.yellow(matchObject.line);
@@ -459,7 +458,7 @@ function hasLineErrors(line, lineNumber, path) {
 
       } else {
         // Check for case errors
-        let closeMatch = Object.keys(tagsAndLinting).find((key) => key.toLowerCase() == matchObject.tagName.toLowerCase());  
+        let closeMatch = Object.keys(tagsAndLinting).find((key) => key.toLowerCase() == matchObject.tagName.toLowerCase());
         let closeMatchPrompt = closeMatch ? `. Did you mean '>>${closeMatch}'?` : "";
         logBadTag(`Unknown tag: '>>${matchObject.tagName}'${closeMatchPrompt}`, matchObject);
         lineError = true;
@@ -474,8 +473,8 @@ glob(filesToLint, function( err, files ) {
   if( err ) {
       console.error( "Could not list the directory.", err );
       process.exit( 1 );
-  } 
-  
+  }
+
   files.forEach(lintInkFile);
   console.log('File to review:', files.length);
 });
