@@ -37,11 +37,79 @@ const checkForInlineLogic = /^[+*\s-]*\{[A-Z()]{3,}:(.*?)\}/iu
 /* LINTING REQUIREMENTS PER TAG CATEGORY*/
 
 let charTagsParam = {
-  tags: ['react', 'emote', 'skin', 'hud', 'intensity'], 
+  tags: ['react', 'emote', 'skin', 'hud', 'intensity', 'pose', 'anim'],
   linter: hasCharacterTagError,
   needsParam: true,
   validParams: {
-    intensity: ["high", "medium", 'med', "low", 'h', 'm', 'l']
+    intensity: ["high", "medium", 'med', "low", 'h', 'm', 'l'],
+    emote: [
+      'dynamic',
+      'disgust',
+      'anxious',
+      'neutral',
+      'sad',
+      'happy',
+      'angry',
+      'chill',
+      'overjoyed',
+      'tired',
+      'wired',
+      'flirty'
+    ],
+    pose: [
+      'ignore',
+      'focus',
+      'off',
+    ],
+    anim: [
+      'Cop.Off',
+      'off',
+      'on',
+      'ticket',
+      'SavyWanted',
+      'focus',
+      'ignore',
+      'typing'],
+    react: [
+      'look_up',
+      'look_down',
+      'look_right',
+      'look_ahead',
+      'look_left',
+      // 'lookleft', // DO NOT ADD BACK. These are invalid.
+      // 'lookright', // DO NOT ADD BACK. These are invalid.
+      // 'lookDown', // DO NOT ADD BACK. These are invalid.
+      // 'lookdown', // DO NOT ADD BACK. These are invalid.
+      'laugh',
+      // 'notice', // No longer valid, use look_up, look_down, etc.
+      // 'notice_destination', // No longer valid, use look_up, look_down, etc.
+      'frown',
+      'squint',
+      'look',
+      'shifty',
+      'smirk',
+      'surprise',
+      // 'surprised', // DO NOT ADD BACK. Use 'surprise' for this react.
+      'huh',
+      'wink',
+      'nod',
+      'awkward',
+      'yawn',
+      'laugh',
+      'shrug',
+      'nod',
+      'sigh',
+      'yes',
+      'smile',
+      'shake',
+      'frown_sad',
+      'eyeroll',
+      'eyes_widen',
+      'wow',
+      'huh',
+      'pretty_please',
+      'shock',
+    ]
   }
 }
 
@@ -57,8 +125,28 @@ let storyTags = {
   linter: hasStoryTagError,
   needsParam: true,
   validParams: {
-    cutCamera: ['linapov', 'paxleft', 'paxright', 'dashcam', 'hoodcam', 'linafront', 'city'],
-    linaHands: ['checkwatch']
+    cutCamera: [
+      'linapov',
+      'LinaFrontClose',
+      'LinaPOVClose',
+      'paxleft',
+      'paxright',
+      'dashcam',
+      'hoodcam',
+      'linafront',
+      'city',
+      'establishing',
+      'reverseclose',
+      'reversewide',
+      //'savyclose', // THIS IS INVALID, use savycloseup
+      'savycloseup',
+      'overshoulder',
+    ],
+    linaHands: [
+      'checkwatch',
+      'lookcenter',
+      'lookleft'
+    ]
   }
 }
 
@@ -77,6 +165,7 @@ let tagsWithoutEvents = {
     ["id",
      "stars",
      "Title",
+     'cost',
      "DisplayName",
      "Reviewers",
      "Length",
@@ -313,7 +402,7 @@ function logBadTag(message, matchObject) {
 
 function lintInkFile(path) {
   let text = fs.readFile(path, 'utf8', function(err, data) {
-    lintBuffer(data);
+    lintBuffer(path, data);
   });
 }
 
