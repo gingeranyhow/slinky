@@ -7,7 +7,6 @@ var defaultDir = '../Assets/Ink Files/';
 // Run just against GDC rides
 var filesToLint = defaultDir + 'GDCDemo/Rides/*.ink';
 
-
 var sendOutputToStream = false;
 var collectedOutput;
 // OR, run against all Rides
@@ -65,7 +64,7 @@ let charTagsParam = {
       'off',
       'on',
       'ticket',
-      'SavyWanted',
+      'savywanted',
       'focus',
       'ignore',
       'typing'],
@@ -126,13 +125,13 @@ let storyTags = {
   validParams: {
     cutCamera: [
       'linapov',
-      'LinaFrontClose',
-      'LinaPOVClose',
+      'linapovclose',
+      'linafront',
+      'linafrontclose',
       'paxleft',
       'paxright',
       'dashcam',
       'hoodcam',
-      'linafront',
       'city',
       'establishing',
       'reverseclose',
