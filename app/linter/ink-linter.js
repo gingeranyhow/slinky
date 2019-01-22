@@ -1,7 +1,7 @@
 var glob = require('glob'),
     fs = require('fs'),
     colors = require('colors/safe');
- 
+
 var defaultDir = '../Assets/Ink Files/';
 
 // Run just against GDC rides
@@ -11,15 +11,15 @@ var sendOutputToStream = false;
 var collectedOutput;
 // OR, run against all Rides
 // var filesToLint = defaultDir + '{,GDCDemo/}' + "Rides/{**,!(NotInUse)/}*.ink"
-             
+
 /* RUN LINTING TESTS */
 /* Run the command `ava linter-test.js` within the test directory
 
-/* TODO: 
-Implement: 
+/* TODO:
+Implement:
 1. react tag with an emote arg, and vice versa - invalid: >>react:happy >>emote:squint
 2. discuss the new, skipped test with Andrew. Is it worth trying to handle ink tags with colons, or are we just
-   reimplementing the Inky tag-parser. 
+   reimplementing the Inky tag-parser.
 3. (Defer) Character tags with mis-spelled characters
 
 /* REGEX PATTERNS */
@@ -126,6 +126,7 @@ let storyTags = {
     cutCamera: [
       'linapov',
       'linapovclose',
+      'linaclose',
       'linafront',
       'linafrontclose',
       'paxleft',
@@ -163,6 +164,7 @@ let tagsWithoutEvents = {
     ["id",
      "stars",
      "Title",
+     'Subheader',
      'cost',
      "DisplayName",
      "Reviewers",
